@@ -3,8 +3,14 @@ package com.agorohov.cs_service.staff_service.service;
 import com.agorohov.cs_service.staff_service.dto.EmployeeDto;
 import com.agorohov.cs_service.staff_service.entity.EmployeeEntity;
 import com.agorohov.cs_service.staff_service.exception.EmployeeNotFoundException;
+import com.agorohov.cs_service.staff_service.exception.PageNotFoundException;
 import com.agorohov.cs_service.staff_service.repository.EmployeeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -16,17 +22,34 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto findByLastName(String lastName) {
-        EmployeeEntity employeeEntity = employeeRepository.findByLastName(lastName)
-                .orElseThrow(() -> new EmployeeNotFoundException("There isn't employee with lastname " + lastName));
+    public Page<EmployeeDto> getByLastName(String lastName, Pageable pageable) {
+        // Приводим полученный lastName к формату с большой буквы
+        String formattedLastName = Character.toUpperCase(lastName.charAt(0))
+                + lastName.substring(1).toLowerCase();
 
-        // TODO маппер
-        EmployeeDto employeeDto = new EmployeeDto();
-        employeeDto.setId(employeeEntity.getId());
-        employeeDto.setFirstName(employeeEntity.getFirstName());
-        employeeDto.setLastName(employeeEntity.getLastName());
-        employeeDto.setPhoneNumber(employeeEntity.getPhoneNumber());
+        // Получаем страницу с сотрудниками
+        Page<EmployeeEntity> employeePage = employeeRepository.findByLastName(formattedLastName, pageable);
 
-        return employeeDto;
+        // Проверяем, есть ли сотрудники с такой фамилией
+        if (employeePage.getTotalElements() == 0) {
+            throw new EmployeeNotFoundException("There aren't any employee with lastname " + formattedLastName);
+        }
+
+        // Проверяем, существует ли запрашиваемая страница
+        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
+            throw new PageNotFoundException("Page " + pageable.getPageNumber()
+                    + " doesn't exists, total pages: " + employeePage.getTotalPages());
+        }
+
+        // Преобразуем сущности в ДТО
+        List<EmployeeDto> employeeDtos = employeePage.getContent().stream()
+                .map(e -> new EmployeeDto(
+                        e.getId(),
+                        e.getFirstName(),
+                        e.getLastName(),
+                        e.getPhoneNumber()
+                )).toList();
+
+        return new PageImpl<>(employeeDtos, pageable, employeePage.getTotalElements());
     }
 }
