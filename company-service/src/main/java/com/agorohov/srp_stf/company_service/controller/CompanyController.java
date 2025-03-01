@@ -1,8 +1,10 @@
 package com.agorohov.srp_stf.company_service.controller;
 
+import com.agorohov.srp_stf.company_service.dto.CompanyDto;
 import com.agorohov.srp_stf.company_service.service.CompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +23,14 @@ public class CompanyController {
     }
 
     @GetMapping("/by-id/{id}")
-    public String getById(@PathVariable(value = "id") long id) {
-        return "Вызван getById с id=" + id;
+    public ResponseEntity<CompanyDto> getById(@PathVariable(value = "id") long id) {
+        log.info("Request received: \"/by-id/{}\"", id);
+        return ResponseEntity.ok().body(companyService.getById(id));
     }
 
     @GetMapping("/by-name/{name}")
-    public String getByName(@PathVariable(value = "name") String name) {
-        return "Вызван getByName с name=" + name;
+    public ResponseEntity<CompanyDto> getByName(@PathVariable(value = "name") String name) {
+        log.info("Request received: \"/by-name/{}\"", name);
+        return ResponseEntity.ok().body(companyService.getByName(name));
     }
 }
