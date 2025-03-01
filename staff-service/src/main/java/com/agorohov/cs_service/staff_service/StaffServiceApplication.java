@@ -9,4 +9,6 @@ public class StaffServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(StaffServiceApplication.class, args);
 	}
+
+	// TODO JUnit tests, javadoc
 }

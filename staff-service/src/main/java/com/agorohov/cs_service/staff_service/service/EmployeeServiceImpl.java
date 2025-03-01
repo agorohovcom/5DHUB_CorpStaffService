@@ -5,6 +5,8 @@ import com.agorohov.cs_service.staff_service.entity.EmployeeEntity;
 import com.agorohov.cs_service.staff_service.exception.EmployeeNotFoundException;
 import com.agorohov.cs_service.staff_service.exception.PageNotFoundException;
 import com.agorohov.cs_service.staff_service.repository.EmployeeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final EmployeeRepository employeeRepository;
 
@@ -32,13 +36,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // Проверяем, есть ли сотрудники с такой фамилией
         if (employeePage.getTotalElements() == 0) {
-            throw new EmployeeNotFoundException("There aren't any employee with lastname " + formattedLastName);
+            String msg = "There aren't any employee with lastname " + formattedLastName;
+            log.error(msg);
+            throw new EmployeeNotFoundException(msg);
         }
 
         // Проверяем, существует ли запрашиваемая страница
         if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
-            throw new PageNotFoundException("Page " + pageable.getPageNumber()
-                    + " doesn't exists, total pages: " + employeePage.getTotalPages());
+            String msg = "Page " + pageable.getPageNumber()
+                    + " doesn't exists, total pages: " + employeePage.getTotalPages();
+            log.error(msg);
+            throw new PageNotFoundException(msg);
         }
 
         // Преобразуем сущности в ДТО
@@ -50,6 +58,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                         e.getPhoneNumber()
                 )).toList();
 
-        return new PageImpl<>(employeeDtos, pageable, employeePage.getTotalElements());
+        PageImpl<EmployeeDto> result = new PageImpl<>(
+                employeeDtos, pageable, employeePage.getTotalElements());
+        log.info("Page with employees with lastname {} returned: {}", formattedLastName, result);
+        return result;
     }
 }

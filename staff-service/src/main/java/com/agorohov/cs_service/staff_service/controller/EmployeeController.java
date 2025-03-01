@@ -2,6 +2,8 @@ package com.agorohov.cs_service.staff_service.controller;
 
 import com.agorohov.cs_service.staff_service.dto.EmployeeDto;
 import com.agorohov.cs_service.staff_service.service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/employees")
 public class EmployeeController {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
@@ -24,6 +28,8 @@ public class EmployeeController {
     public Page<EmployeeDto> getByLastName(
             @RequestParam(value = "lastname") String lastName,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        log.info("Request received: \"/by-lastname?lastname={}&size={}&page={}\"",
+                lastName, pageable.getPageSize(), pageable.getPageNumber());
         return employeeService.getByLastName(lastName, pageable);
     }
 }
