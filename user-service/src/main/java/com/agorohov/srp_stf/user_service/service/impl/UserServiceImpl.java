@@ -1,10 +1,11 @@
-package com.agorohov.srp_stf.user_service.service;
+package com.agorohov.srp_stf.user_service.service.impl;
 
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
 import com.agorohov.srp_stf.user_service.exception.PageNotFoundException;
 import com.agorohov.srp_stf.user_service.exception.UserNotFoundException;
 import com.agorohov.srp_stf.user_service.repository.UserRepository;
+import com.agorohov.srp_stf.user_service.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

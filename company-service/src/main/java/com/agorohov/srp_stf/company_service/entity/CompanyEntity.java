@@ -17,7 +17,7 @@ public class CompanyEntity {
     private String name;
     @Column(name = "budget")
     private BigDecimal budget;
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<EmployeeEntity> employees;
 
     public CompanyEntity() {
