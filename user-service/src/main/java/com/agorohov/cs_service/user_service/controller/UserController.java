@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -24,7 +24,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/by-lastname")
+    @GetMapping("/by-lastname")
     public Page<UserDto> getByLastName(
             @RequestParam(value = "lastname") String lastName,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
