@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.agorohov.srp_stf</groupId>
-	<artifactId>user-service</artifactId>
+	<artifactId>company-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>User Service</name>
-	<description>User microservice of CorpStaffService</description>
+	<name>Corp Service</name>
+	<description>Company microservice of CorpStaffService</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
