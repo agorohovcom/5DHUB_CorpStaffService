@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
         // Преобразуем сущности в ДТО
         List<UserDto> employeeDtos = employeePage.getContent().stream()
+                // TODO вынести в маппер
                 .map(e -> new UserDto(
                         e.getId(),
                         e.getFirstName(),
@@ -68,6 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsersByIds(List<Long> ids) {
         List<UserEntity> userEntities = userRepository.findAllById(ids);
+        // TODO вынести в маппер
         return userEntities.stream()
                 .map(e -> new UserDto(
                         e.getId(),

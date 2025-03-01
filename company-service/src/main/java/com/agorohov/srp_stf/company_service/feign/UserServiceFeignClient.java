@@ -1,15 +1,15 @@
-//package com.agorohov.srp_stf.company_service.feign;
-//
-//import com.agorohov.srp_stf.company_service.dto.UserDto;
-//import org.springframework.cloud.openfeign.FeignClient;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//
-//import java.util.List;
-//
-//@FeignClient(name = "user-service")
-//public interface UserServiceFeignClient {
-//
-//    @GetMapping("/users/by-ids")
-//    List<UserDto> getUsersByIds(@RequestParam("by-ids") List<Long> ids);
-//}
+package com.agorohov.srp_stf.company_service.feign;
+
+import com.agorohov.srp_stf.company_service.dto.UserDto;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+@FeignClient(name = "user-service")
+public interface UserServiceFeignClient {
+
+    @GetMapping("/users/by-ids")
+    List<UserDto> getUsersByIds(@RequestParam("by-ids") List<Long> ids);
+}

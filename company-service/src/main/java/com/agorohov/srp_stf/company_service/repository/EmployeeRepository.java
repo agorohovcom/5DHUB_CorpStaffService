@@ -17,5 +17,6 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
     @Query("SELECT COUNT(e) FROM EmployeeEntity e WHERE e.company.id = :companyId")
     int getNumberOfEmployeesByCompanyId(@Param("companyId") long companyId);
 
+    @Query("SELECT e.userId FROM EmployeeEntity e WHERE e.company.id = :companyId")
     List<Long> findEmployeeIdsByCompanyId(long companyId);
 }
