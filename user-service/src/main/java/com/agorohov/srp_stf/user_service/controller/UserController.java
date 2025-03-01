@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -26,10 +28,15 @@ public class UserController {
 
     @GetMapping("/by-lastname")
     public Page<UserDto> getByLastName(
-            @RequestParam(value = "lastname") String lastName,
+            @RequestParam("lastname") String lastName,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
         log.info("Request received: \"/by-lastname?lastname={}&size={}&page={}\"",
                 lastName, pageable.getPageSize(), pageable.getPageNumber());
         return userService.getByLastName(lastName, pageable);
+    }
+
+    @GetMapping("/by-ids")
+    public List<UserDto> getByIds(@RequestParam("by-ids") List<Long> ids) {
+        return userService.getUsersByIds(ids);
     }
 }

@@ -64,4 +64,16 @@ public class UserServiceImpl implements UserService {
         log.info("Page with users with lastname {} returned: {}", formattedLastName, result);
         return result;
     }
+
+    @Override
+    public List<UserDto> getUsersByIds(List<Long> ids) {
+        List<UserEntity> userEntities = userRepository.findAllById(ids);
+        return userEntities.stream()
+                .map(e -> new UserDto(
+                        e.getId(),
+                        e.getFirstName(),
+                        e.getLastName(),
+                        e.getPhoneNumber()
+                )).toList();
+    }
 }

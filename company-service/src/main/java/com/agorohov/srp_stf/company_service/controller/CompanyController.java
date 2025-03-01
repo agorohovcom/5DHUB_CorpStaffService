@@ -23,13 +23,13 @@ public class CompanyController {
     }
 
     @GetMapping("/by-id")
-    public ResponseEntity<CompanyDto> getById(@RequestParam(value = "id") long id) {
+    public ResponseEntity<CompanyDto> getById(@RequestParam("id") long id) {
         log.info("Request received: \"/by-id/{}\"", id);
         return ResponseEntity.ok().body(companyService.getById(id));
     }
 
     @GetMapping("/by-name")
-    public ResponseEntity<CompanyDto> getByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<CompanyDto> getByName(@RequestParam("name") String name) {
         log.info("Request received: \"/by-name/{}\"", name);
         return ResponseEntity.ok().body(companyService.getByName(name));
     }
