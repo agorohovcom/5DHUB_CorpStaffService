@@ -64,8 +64,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getUsersByIds(List<Long> ids) {
         List<UserEntity> userEntities = userRepository.findAllById(ids);
-        return userEntities.stream()
+        List<UserDto> result = userEntities.stream()
                 .map(UserMapper::mapUserEntityToUserDto)
                 .toList();
+        log.info("Returned list with {} instances of UserDto", result.size());
+        return result;
     }
 }

@@ -36,7 +36,8 @@ public class UserController {
     }
 
     @GetMapping("/by-ids")
-    public List<UserDto> getByIds(@RequestParam("by-ids") List<Long> ids) {
+    public List<UserDto> getByIds(@RequestParam("ids") List<Long> ids) {
+        log.info("Request received: \"/by-ids\" with request param \"ids\": {}", ids);
         return userService.getUsersByIds(ids);
     }
 }

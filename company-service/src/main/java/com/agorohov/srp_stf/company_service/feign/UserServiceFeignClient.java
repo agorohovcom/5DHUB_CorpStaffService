@@ -11,5 +11,5 @@ import java.util.List;
 public interface UserServiceFeignClient {
 
     @GetMapping("/users/by-ids")
-    List<UserDto> getUsersByIds(@RequestParam("by-ids") List<Long> ids);
+    List<UserDto> getUsersByIds(@RequestParam("ids") List<Long> ids);
 }
