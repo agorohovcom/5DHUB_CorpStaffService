@@ -73,7 +73,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(CreateUser user) {
-        userRepository.save(UserMapper.mapCreateUserToUserEntity(user));
+    public UserDto create(CreateUser user) {
+        UserEntity entity = UserMapper.mapCreateUserToUserEntity(user);
+        UserDto result = UserMapper.mapUserEntityToUserDto(userRepository.save(entity));
+        log.info("Created user: {}", result);
+        return result;
+    }
+
+    @Override
+    public UserDto get(long id) {
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("No user with id " + id));
+        UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
+        log.info("Returned user with id={}: {}", id, result);
+        return result;
     }
 }

@@ -12,5 +12,7 @@ public interface UserService {
 
     List<UserDto> getUsersByIds(List<Long> ids);
 
-    void create(CreateUser user);
+    UserDto create(CreateUser user);
+
+    UserDto get(long id);
 }

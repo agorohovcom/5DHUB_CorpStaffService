@@ -43,16 +43,15 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody CreateUser user) {
-        userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<UserDto> create(@Valid @RequestBody CreateUser user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(user));
     }
 
-//    @GetMapping
-//    public ResponseEntity<UserDto> get(@RequestParam("id") long id) {
-//        return ResponseEntity.status(HttpStatus.OK).body(userService.get(id));
-//    }
-//
+    @GetMapping
+    public ResponseEntity<UserDto> get(@RequestParam("id") long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.get(id));
+    }
+
 //    @PatchMapping
 //    public ResponseEntity<UserDto> update(@Valid @RequestBody UpdateUser user) {
 //        return ResponseEntity.status(HttpStatus.OK).body(userService.update(user));
