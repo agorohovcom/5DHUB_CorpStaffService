@@ -1,5 +1,6 @@
 package com.agorohov.srp_stf.user_service.service.impl;
 
+import com.agorohov.srp_stf.user_service.dto.CreateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
 import com.agorohov.srp_stf.user_service.exception.PageNotFoundException;
@@ -69,5 +70,10 @@ public class UserServiceImpl implements UserService {
                 .toList();
         log.info("Returned list with {} instances of UserDto", result.size());
         return result;
+    }
+
+    @Override
+    public void create(CreateUser user) {
+        userRepository.save(UserMapper.mapCreateUserToUserEntity(user));
     }
 }
