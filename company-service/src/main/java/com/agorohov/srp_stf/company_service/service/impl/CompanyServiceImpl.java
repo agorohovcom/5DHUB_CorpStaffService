@@ -3,6 +3,7 @@ package com.agorohov.srp_stf.company_service.service.impl;
 import com.agorohov.srp_stf.company_service.dto.CompanyDto;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
 import com.agorohov.srp_stf.company_service.exception.CompanyNotFoundException;
+import com.agorohov.srp_stf.company_service.mapper.CompanyMapper;
 import com.agorohov.srp_stf.company_service.repository.CompanyRepository;
 import com.agorohov.srp_stf.company_service.service.CompanyService;
 import com.agorohov.srp_stf.company_service.service.EmployeeService;
@@ -40,7 +41,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(id);
 
         // Преобразуем сущность компании в ДТО
-        CompanyDto result = mapEntityToDto(companyEntity, numberOfEmployees);
+        CompanyDto result = CompanyMapper.mapEntityToDto(companyEntity, numberOfEmployees);
 
         log.info("Company found by id: {}", result);
         return result;
@@ -62,17 +63,8 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(companyEntity.getId());
 
         // Преобразуем сущность компании в ДТО и возвращаем результат
-        CompanyDto result = mapEntityToDto(companyEntity, numberOfEmployees);
+        CompanyDto result = CompanyMapper.mapEntityToDto(companyEntity, numberOfEmployees);
         log.info("Company found by name: {}", result);
-        return result;
-    }
-
-    private CompanyDto mapEntityToDto(CompanyEntity entity, int numberOfEmployees) {
-        CompanyDto result = new CompanyDto();
-        result.setId(entity.getId());
-        result.setName(entity.getName());
-        result.setBudget(entity.getBudget());
-        result.setNumberOfEmployees(numberOfEmployees);
         return result;
     }
 }

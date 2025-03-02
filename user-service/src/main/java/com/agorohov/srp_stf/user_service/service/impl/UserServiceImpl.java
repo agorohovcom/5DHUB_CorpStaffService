@@ -4,6 +4,7 @@ import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
 import com.agorohov.srp_stf.user_service.exception.PageNotFoundException;
 import com.agorohov.srp_stf.user_service.exception.UserNotFoundException;
+import com.agorohov.srp_stf.user_service.mapper.UserMapper;
 import com.agorohov.srp_stf.user_service.repository.UserRepository;
 import com.agorohov.srp_stf.user_service.service.UserService;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<UserDto> getByLastName(String lastName, Pageable pageable) {
         // Получаем страницу с юзерами, игнорируя case и на всякий случай вызывая trim()
         Page<UserEntity> employeePage = userRepository.findByLastNameIgnoreCase(lastName.trim(), pageable);
@@ -48,13 +51,8 @@ public class UserServiceImpl implements UserService {
 
         // Преобразуем сущности в ДТО
         List<UserDto> employeeDtos = employeePage.getContent().stream()
-                // TODO вынести в маппер
-                .map(e -> new UserDto(
-                        e.getId(),
-                        e.getFirstName(),
-                        e.getLastName(),
-                        e.getPhoneNumber()
-                )).toList();
+                .map(UserMapper::mapUserEntityToUserDto)
+                .toList();
 
         PageImpl<UserDto> result = new PageImpl<>(
                 employeeDtos, pageable, employeePage.getTotalElements());
@@ -63,15 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getUsersByIds(List<Long> ids) {
         List<UserEntity> userEntities = userRepository.findAllById(ids);
-        // TODO вынести в маппер
         return userEntities.stream()
-                .map(e -> new UserDto(
-                        e.getId(),
-                        e.getFirstName(),
-                        e.getLastName(),
-                        e.getPhoneNumber()
-                )).toList();
+                .map(UserMapper::mapUserEntityToUserDto)
+                .toList();
     }
 }
