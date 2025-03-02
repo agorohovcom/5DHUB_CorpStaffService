@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Page<UserEntity> findByLastName(String lastName, Pageable pageable);
+
+    Page<UserEntity> findByLastNameIgnoreCase(String lastName, Pageable pageable);
+
 }

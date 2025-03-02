@@ -28,16 +28,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserDto> getByLastName(String lastName, Pageable pageable) {
-        // Приводим полученный lastName к формату с большой буквы
-        String formattedLastName = Character.toUpperCase(lastName.charAt(0))
-                + lastName.substring(1).toLowerCase();
-
-        // Получаем страницу с юзерами
-        Page<UserEntity> employeePage = userRepository.findByLastName(formattedLastName, pageable);
+        // Получаем страницу с юзерами, игнорируя case и на всякий случай вызывая trim()
+        Page<UserEntity> employeePage = userRepository.findByLastNameIgnoreCase(lastName.trim(), pageable);
 
         // Проверяем, есть ли юзеры с такой фамилией
         if (employeePage.getTotalElements() == 0) {
-            String msg = "There aren't any users with lastname " + formattedLastName;
+            String msg = "There aren't any users with lastname " + lastName;
             log.error(msg);
             throw new UserNotFoundException(msg);
         }
@@ -62,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
         PageImpl<UserDto> result = new PageImpl<>(
                 employeeDtos, pageable, employeePage.getTotalElements());
-        log.info("Page with users with lastname {} returned: {}", formattedLastName, result);
+        log.info("Page with users with lastname {} returned: {}", lastName, result);
         return result;
     }
 

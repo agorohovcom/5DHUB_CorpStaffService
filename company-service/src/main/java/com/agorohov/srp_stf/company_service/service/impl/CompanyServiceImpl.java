@@ -9,6 +9,7 @@ import com.agorohov.srp_stf.company_service.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -24,6 +25,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompanyDto getById(long id) {
         // получаем компанию по id или выбрасываем исключение
         CompanyEntity companyEntity = companyRepository.findById(id)
@@ -45,6 +47,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompanyDto getByName(String name) {
         // получаем компанию по имени или выбрасываем исключение
         CompanyEntity companyEntity = companyRepository.findByNameIgnoreCase(name.trim())
