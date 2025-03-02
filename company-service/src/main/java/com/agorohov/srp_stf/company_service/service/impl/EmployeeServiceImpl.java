@@ -1,15 +1,9 @@
 package com.agorohov.srp_stf.company_service.service.impl;
 
-import com.agorohov.srp_stf.company_service.dto.UserDto;
-import com.agorohov.srp_stf.company_service.feign.UserServiceFeignClient;
 import com.agorohov.srp_stf.company_service.repository.EmployeeRepository;
-import com.agorohov.srp_stf.company_service.service.CompanyValidator;
 import com.agorohov.srp_stf.company_service.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,22 +15,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final EmployeeRepository employeeRepository;
-    private final UserServiceFeignClient userServiceFeignClient;
-    private final CompanyValidator companyValidator;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository,
-                               UserServiceFeignClient userServiceFeignClient,
-                               CompanyValidator companyValidator) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
-        this.userServiceFeignClient = userServiceFeignClient;
-        this.companyValidator = companyValidator;
     }
 
     /**
-     * Takes a company id and returns the number of employees of this company.
-     *
-     * @param companyId company id
-     * @return number of employees in this company
+     * Returns the number of employees by company ID.
+     * @param companyId company ID
+     * @return number of employees by company
      */
     @Override
     @Transactional(readOnly = true)
@@ -45,25 +32,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * Takes a company id and a Pageable object that contains the size and page parameters,
-     * returns a list of employees of this company as a Page object.
+     * Returns a list of employee IDs by company ID.
      * @param companyId company id
-     * @param pageable a Pageable object that contains the size and page parameters
-     * @return Page object contains UserDto objects
+     * @return list of employees' ids by company id
      */
     @Override
-    @Transactional(readOnly = true)
-    public Page<UserDto> getUsersByCompanyId(long companyId, Pageable pageable) {
-        // Проверяем существование компании через CompanyValidator
-        companyValidator.validateCompanyExists(companyId);
-
-        List<Long> userIds = employeeRepository.findEmployeeIdsByCompanyId(companyId);
-        List<UserDto> userDtos = userServiceFeignClient.getUsersByIds(userIds);
-
-        Page<UserDto> result = new PageImpl<>(userDtos, pageable, userDtos.size());
-
-        log.info("Returned list employees of company with id {}, size = {}",
-                companyId, userDtos.size());
-        return result;
+    public List<Long> findEmployeeIdsByCompanyId(long companyId) {
+        return employeeRepository.findEmployeeIdsByCompanyId(companyId);
     }
 }

@@ -1,11 +1,9 @@
 package com.agorohov.srp_stf.company_service.service;
 
-import com.agorohov.srp_stf.company_service.dto.UserDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 
 public interface EmployeeService {
     int getNumberOfEmployeesByCompanyId(long companyId);
 
-    Page<UserDto> getUsersByCompanyId(long companyId, Pageable pageable);
+    List<Long> findEmployeeIdsByCompanyId(long companyId);
 }
