@@ -72,6 +72,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Page<UserDto> getAll(Pageable pageable) {
+        Page<UserEntity> employeePage = userRepository.findAll(pageable);
+
+        // Проверяем, существует ли запрашиваемая страница
+        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
+            String msg = "Page " + pageable.getPageNumber()
+                    + " of all users doesn't exists, total pages: " + employeePage.getTotalPages();
+            log.error(msg);
+            throw new PageNotFoundException(msg);
+        }
+        // Преобразуем сущности в ДТО
+        List<UserDto> employeeDtos = employeePage.getContent().stream()
+                .map(UserMapper::mapUserEntityToUserDto)
+                .toList();
+
+        PageImpl<UserDto> result = new PageImpl<>(
+                employeeDtos, pageable, employeePage.getTotalElements());
+        log.info("Page with users returned: {}", result);
+        return result;
+    }
+
+    @Override
     public UserDto create(CreateUser user) {
         UserEntity entity = UserMapper.mapCreateUserToUserEntity(user);
         // Сохраняем юзера в БД и маппим в UserDto, чтобы вернуть созданного юзера уже с ID
@@ -112,5 +134,10 @@ public class UserServiceImpl implements UserService {
         UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
         log.info("Updated user: {}", result);
         return result;
+    }
+
+    @Override
+    public void delete(long id) {
+        userRepository.deleteById(id);
     }
 }

@@ -18,4 +18,8 @@ public interface UserService {
     UserDto get(long id);
 
     UserDto update(UpdateUser user);
+
+    void delete(long id);
+
+    Page<UserDto> getAll(Pageable pageable);
 }
