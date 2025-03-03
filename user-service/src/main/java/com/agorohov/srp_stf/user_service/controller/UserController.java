@@ -5,8 +5,6 @@ import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.service.UserService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,8 +18,6 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -32,15 +28,17 @@ public class UserController {
     public Page<UserDto> getByLastName(
             @RequestParam("lastname") String lastName,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        log.info("Request received: \"/by-lastname?lastname={}&size={}&page={}\"",
-                lastName, pageable.getPageSize(), pageable.getPageNumber());
         return userService.getByLastName(lastName, pageable);
     }
 
     @GetMapping("/by-ids")
     public List<UserDto> getByIds(@RequestParam("ids") List<Long> ids) {
-        log.info("Request received: \"/by-ids\" with request param \"ids\": {}", ids);
         return userService.getUsersByIds(ids);
+    }
+
+    @GetMapping
+    public Page<UserDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return userService.getAll(pageable);
     }
 
     @PostMapping
@@ -48,8 +46,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(user));
     }
 
-    @GetMapping
-    public ResponseEntity<UserDto> get(@RequestParam("id") long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> get(@PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.get(id));
     }
 
@@ -58,9 +56,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(user));
     }
 
-//    @DeleteMapping
-//    public ResponseEntity<Void> delete(@RequestParam("id") long id) {
-//        userService.delete(id);
-//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+        userService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

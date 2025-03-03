@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
 
         // Проверяем, существует ли запрашиваемая страница
         if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
-            String msg = "Page " + pageable.getPageNumber()
-                    + " doesn't exists, total pages: " + employeePage.getTotalPages();
+            String msg = String.format("Page %d doesn't exists, total pages: %d",
+                    pageable.getPageNumber(), employeePage.getTotalPages());
             log.error(msg);
             throw new PageNotFoundException(msg);
         }
@@ -68,6 +68,28 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::mapUserEntityToUserDto)
                 .toList();
         log.info("Returned list with {} instances of UserDto", result.size());
+        return result;
+    }
+
+    @Override
+    public Page<UserDto> getAll(Pageable pageable) {
+        Page<UserEntity> employeePage = userRepository.findAll(pageable);
+
+        // Проверяем, существует ли запрашиваемая страница
+        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
+            String msg = String.format("Page %d doesn't exists, total pages: %d",
+                    pageable.getPageNumber(), employeePage.getTotalPages());
+            log.error(msg);
+            throw new PageNotFoundException(msg);
+        }
+        // Преобразуем сущности в ДТО
+        List<UserDto> employeeDtos = employeePage.getContent().stream()
+                .map(UserMapper::mapUserEntityToUserDto)
+                .toList();
+
+        PageImpl<UserDto> result = new PageImpl<>(
+                employeeDtos, pageable, employeePage.getTotalElements());
+        log.info("Page with users returned: {}", result);
         return result;
     }
 
@@ -112,5 +134,11 @@ public class UserServiceImpl implements UserService {
         UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
         log.info("Updated user: {}", result);
         return result;
+    }
+
+    @Override
+    public void delete(long id) {
+        userRepository.deleteById(id);
+        log.info("User with id {} deleted", id);
     }
 }
