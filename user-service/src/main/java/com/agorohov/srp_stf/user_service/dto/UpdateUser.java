@@ -2,11 +2,12 @@ package com.agorohov.srp_stf.user_service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public class UpdateUser {
 
-    @Size(min = 1)
+    @Positive
     private long id;
     @Size(max = 32)
     @NotBlank

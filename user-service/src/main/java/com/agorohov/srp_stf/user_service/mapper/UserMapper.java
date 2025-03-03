@@ -1,6 +1,7 @@
 package com.agorohov.srp_stf.user_service.mapper;
 
 import com.agorohov.srp_stf.user_service.dto.CreateUser;
+import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
 import com.agorohov.srp_stf.user_service.exception.MapperException;
@@ -33,6 +34,20 @@ public class UserMapper {
             return result;
         } catch (Exception ex) {
             log.error("Failed mapping CreateUser to UserEntity: {}", ex.getLocalizedMessage());
+            throw new MapperException(ex);
+        }
+    }
+
+    public static UserEntity mapUpdateUserToUserEntity(UpdateUser user) {
+        try {
+            UserEntity result = new UserEntity();
+            result.setId(user.getId());
+            result.setFirstName(user.getFirstName());
+            result.setLastName(user.getLastName());
+            result.setPhoneNumber(user.getPhoneNumber());
+            return result;
+        } catch (Exception ex) {
+            log.error("Failed mapping UpdateUser to UserEntity: {}", ex.getLocalizedMessage());
             throw new MapperException(ex);
         }
     }

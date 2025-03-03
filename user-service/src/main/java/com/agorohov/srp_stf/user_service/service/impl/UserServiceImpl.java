@@ -1,6 +1,7 @@
 package com.agorohov.srp_stf.user_service.service.impl;
 
 import com.agorohov.srp_stf.user_service.dto.CreateUser;
+import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
 import com.agorohov.srp_stf.user_service.exception.PageNotFoundException;
@@ -30,7 +31,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<UserDto> getByLastName(String lastName, Pageable pageable) {
         // Получаем страницу с юзерами, игнорируя case и на всякий случай вызывая trim()
         Page<UserEntity> employeePage = userRepository.findByLastNameIgnoreCase(lastName.trim(), pageable);
@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDto> getUsersByIds(List<Long> ids) {
         List<UserEntity> userEntities = userRepository.findAllById(ids);
         List<UserDto> result = userEntities.stream()
@@ -75,6 +74,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(CreateUser user) {
         UserEntity entity = UserMapper.mapCreateUserToUserEntity(user);
+        // Сохраняем юзера в БД и маппим в UserDto, чтобы вернуть созданного юзера уже с ID
+        // (можно обойтись без этого и просто возвращать статус 201 Created вместо UserDto)
         UserDto result = UserMapper.mapUserEntityToUserDto(userRepository.save(entity));
         log.info("Created user: {}", result);
         return result;
@@ -83,9 +84,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto get(long id) {
         UserEntity userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("No user with id " + id));
+                .orElseThrow(() -> {
+                    String msg = "No user with id " + id;
+                    log.error("Fail get user: {}", msg);
+                    return new UserNotFoundException(msg);
+                });
         UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
-        log.info("Returned user with id={}: {}", id, result);
+        log.info("Got user: {}", result);
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public UserDto update(UpdateUser user) {
+        // Проверяем есть ли юзер с таким ID, чтобы не создавать нового при попытке отредактировать несуществующего
+        userRepository.findById(user.getId())
+                .orElseThrow(() -> {
+                    String msg = "No user with id " + user.getId();
+                    log.error("Fail update user: {}", msg);
+                    return new UserNotFoundException(msg);
+                });
+        // Маппим в UserEntity и сохраняем
+        UserEntity userEntity = UserMapper.mapUpdateUserToUserEntity(user);
+        userRepository.save(userEntity);
+        // Маппим обновленного юзера в UserDto и возвращаем результат
+        // (можно было вернуть 200 OK или тот же UpdateUser, но хочется побыть дотошным)
+        UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
+        log.info("Updated user: {}", result);
         return result;
     }
 }

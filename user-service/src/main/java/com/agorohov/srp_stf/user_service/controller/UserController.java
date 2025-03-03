@@ -1,6 +1,7 @@
 package com.agorohov.srp_stf.user_service.controller;
 
 import com.agorohov.srp_stf.user_service.dto.CreateUser;
+import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.service.UserService;
 import jakarta.validation.Valid;
@@ -52,11 +53,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.get(id));
     }
 
-//    @PatchMapping
-//    public ResponseEntity<UserDto> update(@Valid @RequestBody UpdateUser user) {
-//        return ResponseEntity.status(HttpStatus.OK).body(userService.update(user));
-//    }
-//
+    @PutMapping
+    public ResponseEntity<UserDto> update(@Valid @RequestBody UpdateUser user) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(user));
+    }
+
 //    @DeleteMapping
 //    public ResponseEntity<Void> delete(@RequestParam("id") long id) {
 //        userService.delete(id);

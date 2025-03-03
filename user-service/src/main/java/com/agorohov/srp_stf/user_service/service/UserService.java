@@ -1,6 +1,7 @@
 package com.agorohov.srp_stf.user_service.service;
 
 import com.agorohov.srp_stf.user_service.dto.CreateUser;
+import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface UserService {
     UserDto create(CreateUser user);
 
     UserDto get(long id);
+
+    UserDto update(UpdateUser user);
 }

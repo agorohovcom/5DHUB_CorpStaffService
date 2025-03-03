@@ -2,6 +2,8 @@ package com.agorohov.srp_stf.user_service.exception;
 
 import com.agorohov.srp_stf.user_service.dto.ErrorMessage;
 import feign.FeignException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,6 +15,8 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorMessage> employeeNotFoundException(UserNotFoundException e) {
@@ -47,6 +51,7 @@ public class GlobalExceptionHandler {
         errorMessage.setMessage("Server is not available now, try again later");
         errorMessage.setTime(LocalDateTime.now());
 
+        log.error("FeignException occurred: {}", e.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
     }
 
@@ -60,6 +65,7 @@ public class GlobalExceptionHandler {
         errorMessage.setMessage(message);
         errorMessage.setTime(LocalDateTime.now());
 
+        log.error("MethodArgumentNotValidException occurred: {}", e.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 }
