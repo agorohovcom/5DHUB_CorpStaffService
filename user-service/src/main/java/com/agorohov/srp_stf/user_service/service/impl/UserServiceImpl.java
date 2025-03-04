@@ -88,34 +88,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Returns all existing users is Pages with UserDto objects.
-     * If the requested page number does not exist, throws PageNotFoundException.
-     * @param pageable Pageable object with size (default = 10) and page (default = 0)
-     * @return Page object with pages of all existing  UserDto objects
-     */
-    @Override
-    public Page<UserDto> getAll(Pageable pageable) {
-        Page<UserEntity> employeePage = userRepository.findAll(pageable);
-
-        // Проверяем, существует ли запрашиваемая страница
-        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
-            String msg = String.format("Page %d doesn't exists, total pages: %d",
-                    pageable.getPageNumber(), employeePage.getTotalPages());
-            log.error(msg);
-            throw new PageNotFoundException(msg);
-        }
-        // Преобразуем сущности в ДТО
-        List<UserDto> employeeDtos = employeePage.getContent().stream()
-                .map(UserMapper::mapUserEntityToUserDto)
-                .toList();
-
-        PageImpl<UserDto> result = new PageImpl<>(
-                employeeDtos, pageable, employeePage.getTotalElements());
-        log.info("Page with users returned: {}", result);
-        return result;
-    }
-
-    /**
      * Takes CreateUser object, saves user id DB and returns UserDto object with new user ID.
      * @param user CreateUser object
      * @return UserDto object
@@ -185,5 +157,34 @@ public class UserServiceImpl implements UserService {
     public void delete(long id) {
         userRepository.deleteById(id);
         log.info("User with id {} deleted", id);
+    }
+
+    /**
+     * Returns all existing users is Pages with UserDto objects.
+     * If the requested page number does not exist, throws PageNotFoundException.
+     *
+     * @param pageable Pageable object with size (default = 10) and page (default = 0)
+     * @return Page object with pages of all existing  UserDto objects
+     */
+    @Override
+    public Page<UserDto> getAll(Pageable pageable) {
+        Page<UserEntity> employeePage = userRepository.findAll(pageable);
+
+        // Проверяем, существует ли запрашиваемая страница
+        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
+            String msg = String.format("Page %d doesn't exists, total pages: %d",
+                    pageable.getPageNumber(), employeePage.getTotalPages());
+            log.error(msg);
+            throw new PageNotFoundException(msg);
+        }
+        // Преобразуем сущности в ДТО
+        List<UserDto> employeeDtos = employeePage.getContent().stream()
+                .map(UserMapper::mapUserEntityToUserDto)
+                .toList();
+
+        PageImpl<UserDto> result = new PageImpl<>(
+                employeeDtos, pageable, employeePage.getTotalElements());
+        log.info("Page with users returned: {}", result);
+        return result;
     }
 }

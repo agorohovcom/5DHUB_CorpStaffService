@@ -36,11 +36,6 @@ public class UserController {
         return userService.getUsersByIds(ids);
     }
 
-    @GetMapping
-    public Page<UserDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-        return userService.getAll(pageable);
-    }
-
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid @RequestBody CreateUser user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(user));
@@ -60,5 +55,10 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping
+    public Page<UserDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return userService.getAll(pageable);
     }
 }
