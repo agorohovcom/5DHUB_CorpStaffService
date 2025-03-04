@@ -30,9 +30,19 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Takes a last name to search for users and a Pageable with page size and number,
+     * returns a Page with UserDto objects.
+     * If the requested page number does not exist, throws PageNotFoundException.
+     * If there is no user with the requested last name, throws UserNotFoundException.
+     *
+     * @param lastName user's lastname
+     * @param pageable Pageable object with size (default = 10) and page (default = 0)
+     * @return Page object with UserDto objects found by lastname
+     */
     @Override
     public Page<UserDto> getByLastName(String lastName, Pageable pageable) {
-        // Получаем страницу с юзерами, игнорируя case и на всякий случай вызывая trim()
+        // Получаем страницу с юзерами, игнорируя case и вызывая trim(), чтобы убрать лишние пробелы
         Page<UserEntity> employeePage = userRepository.findByLastNameIgnoreCase(lastName.trim(), pageable);
 
         // Проверяем, есть ли юзеры с такой фамилией
@@ -43,6 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Проверяем, существует ли запрашиваемая страница
+        // (на случай если будет запрошена страница за пределами существующих)
         if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
             String msg = String.format("Page %d doesn't exists, total pages: %d",
                     pageable.getPageNumber(), employeePage.getTotalPages());
@@ -61,6 +72,11 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    /**
+     * Takes user ids and returns a list of UserDto objects.
+     * @param ids list of user ids
+     * @return UserDto list
+     */
     @Override
     public List<UserDto> getUsersByIds(List<Long> ids) {
         List<UserEntity> userEntities = userRepository.findAllById(ids);
@@ -71,6 +87,12 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    /**
+     * Returns all existing users is Pages with UserDto objects.
+     * If the requested page number does not exist, throws PageNotFoundException.
+     * @param pageable Pageable object with size (default = 10) and page (default = 0)
+     * @return Page object with pages of all existing  UserDto objects
+     */
     @Override
     public Page<UserDto> getAll(Pageable pageable) {
         Page<UserEntity> employeePage = userRepository.findAll(pageable);
@@ -93,6 +115,11 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    /**
+     * Takes CreateUser object, saves user id DB and returns UserDto object with new user ID.
+     * @param user CreateUser object
+     * @return UserDto object
+     */
     @Override
     public UserDto create(CreateUser user) {
         UserEntity entity = UserMapper.mapCreateUserToUserEntity(user);
@@ -103,6 +130,12 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    /**
+     * Takes user ID and return found user in UserDto object.
+     * If there is no user with the requested ID, throws UserNotFoundException.
+     * @param id user ID
+     * @return UserDto object
+     */
     @Override
     public UserDto get(long id) {
         UserEntity userEntity = userRepository.findById(id)
@@ -116,6 +149,14 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    /**
+     * Takes UpdateUser to update the user.
+     * If there is no user with the same ID, throws UserNotFoundException.
+     * If there is a user with the same ID as in UpdateUser,
+     * updates the user in the DB and returns UserDto with the updated data.
+     * @param user UpdateUser object
+     * @return UserDto object with updated fields
+     */
     @Override
     @Transactional
     public UserDto update(UpdateUser user) {
@@ -136,6 +177,10 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    /**
+     * Deletes user with taking ID, returns ni data.
+     * @param id user ID
+     */
     @Override
     public void delete(long id) {
         userRepository.deleteById(id);
