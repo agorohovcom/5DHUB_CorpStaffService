@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Deletes user with taking ID, returns ni data.
+     * Deletes user with taking ID, returns no data.
      * @param id user ID
      */
     @Override

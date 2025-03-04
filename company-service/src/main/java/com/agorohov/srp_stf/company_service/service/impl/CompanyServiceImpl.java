@@ -187,4 +187,15 @@ public class CompanyServiceImpl implements CompanyService {
         log.info("Updated company: {}", result);
         return result;
     }
+
+    /**
+     * Deletes company with taking ID, returns no data.
+     *
+     * @param id company ID
+     */
+    @Override
+    public void delete(long id) {
+        companyRepository.deleteById(id);
+        log.info("Company with id {} deleted", id);
+    }
 }

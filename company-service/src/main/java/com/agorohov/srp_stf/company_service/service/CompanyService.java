@@ -18,4 +18,6 @@ public interface CompanyService {
     CompanyDto get(long id);
 
     CompanyDto update(UpdateCompany company);
+
+    void delete(long id);
 }
