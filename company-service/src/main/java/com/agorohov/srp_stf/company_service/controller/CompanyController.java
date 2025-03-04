@@ -27,13 +27,13 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @GetMapping("/by-id")
+    @GetMapping("/info-by-id")
     public ResponseEntity<CompanyInfo> getInfoById(@RequestParam("id") long id) {
         log.info("Request received: \"/by-id/{}\"", id);
         return ResponseEntity.ok().body(companyService.getById(id));
     }
 
-    @GetMapping("/by-name")
+    @GetMapping("/info-by-name")
     public ResponseEntity<CompanyInfo> getInfoByName(@RequestParam("name") String name) {
         log.info("Request received: \"/by-name/{}\"", name);
         return ResponseEntity.ok().body(companyService.getByName(name));
@@ -62,11 +62,11 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.create(company));
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<CompanyDto> get(@PathVariable("id") long id) {
-//        return ResponseEntity.status(HttpStatus.OK).body(companyService.get(id));
-//    }
-//
+    @GetMapping("/{id}")
+    public ResponseEntity<CompanyDto> get(@PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.get(id));
+    }
+
 //    @PutMapping
 //    public ResponseEntity<CompanyDto> update(@Valid @RequestBody UpdateCompany company) {
 //        return ResponseEntity.status(HttpStatus.OK).body(companyService.update(company));

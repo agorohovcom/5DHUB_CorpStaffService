@@ -152,4 +152,17 @@ public class CompanyServiceImpl implements CompanyService {
         log.info("Created company: {}", result);
         return result;
     }
+
+    @Override
+    public CompanyDto get(long id) {
+        CompanyEntity companyEntity = companyRepository.findById(id)
+                .orElseThrow(() -> {
+                    String msg = "No company with id " + id;
+                    log.error("Fail get company: {}", msg);
+                    return new CompanyNotFoundException(msg);
+                });
+        CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity);
+        log.info("Got company: {}", result);
+        return result;
+    }
 }

@@ -17,4 +17,6 @@ public interface CompanyService {
     Page<UserDto> getUsersByCompanyName(String companyName, Pageable pageable);
 
     CompanyDto create(CreateCompany company);
+
+    CompanyDto get(long id);
 }
