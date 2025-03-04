@@ -1,28 +1,25 @@
 package com.agorohov.srp_stf.company_service.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
 import java.math.BigDecimal;
 
-public class CompanyDto {
+public class CreateCompany {
 
-    private long id;
+    @Size(max = 32)
+    @NotBlank
     private String name;
+    @PositiveOrZero
     private BigDecimal budget;
 
-    public CompanyDto() {
+    public CreateCompany() {
     }
 
-    public CompanyDto(long id, String name, BigDecimal budget) {
-        this.id = id;
+    public CreateCompany(String name, BigDecimal budget) {
         this.name = name;
         this.budget = budget;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -39,14 +36,5 @@ public class CompanyDto {
 
     public void setBudget(BigDecimal budget) {
         this.budget = budget;
-    }
-
-    @Override
-    public String toString() {
-        return "CompanyDto{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", budget=" + budget +
-                '}';
     }
 }

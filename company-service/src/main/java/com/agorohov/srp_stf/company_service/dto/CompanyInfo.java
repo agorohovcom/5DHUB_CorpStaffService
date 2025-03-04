@@ -2,19 +2,21 @@ package com.agorohov.srp_stf.company_service.dto;
 
 import java.math.BigDecimal;
 
-public class CompanyDto {
+public class CompanyInfo {
 
     private long id;
     private String name;
     private BigDecimal budget;
+    private int numberOfEmployees;
 
-    public CompanyDto() {
+    public CompanyInfo() {
     }
 
-    public CompanyDto(long id, String name, BigDecimal budget) {
+    public CompanyInfo(long id, String name, BigDecimal budget, int numberOfEmployees) {
         this.id = id;
         this.name = name;
         this.budget = budget;
+        this.numberOfEmployees = numberOfEmployees;
     }
 
     public long getId() {
@@ -41,12 +43,21 @@ public class CompanyDto {
         this.budget = budget;
     }
 
+    public int getNumberOfEmployees() {
+        return numberOfEmployees;
+    }
+
+    public void setNumberOfEmployees(int numberOfEmployees) {
+        this.numberOfEmployees = numberOfEmployees;
+    }
+
     @Override
     public String toString() {
-        return "CompanyDto{" +
+        return "CompanyInfo{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", budget=" + budget +
+                ", numberOfEmployees=" + numberOfEmployees +
                 '}';
     }
 }

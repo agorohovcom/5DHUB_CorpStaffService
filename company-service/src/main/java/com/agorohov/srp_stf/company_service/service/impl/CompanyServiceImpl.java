@@ -1,6 +1,6 @@
 package com.agorohov.srp_stf.company_service.service.impl;
 
-import com.agorohov.srp_stf.company_service.dto.CompanyDto;
+import com.agorohov.srp_stf.company_service.dto.CompanyInfo;
 import com.agorohov.srp_stf.company_service.dto.UserDto;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
 import com.agorohov.srp_stf.company_service.exception.CompanyNotFoundException;
@@ -36,7 +36,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompanyDto getById(long id) {
+    public CompanyInfo getById(long id) {
         // получаем компанию по id или выбрасываем исключение
         CompanyEntity companyEntity = companyRepository.findById(id)
                 .orElseThrow(() -> {
@@ -50,7 +50,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(id);
 
         // Преобразуем сущность компании в ДТО
-        CompanyDto result = CompanyMapper.mapEntityToDto(companyEntity, numberOfEmployees);
+        CompanyInfo result = CompanyMapper.mapEntityToInfo(companyEntity, numberOfEmployees);
 
         log.info("Company found by id: {}", result);
         return result;
@@ -58,7 +58,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompanyDto getByName(String name) {
+    public CompanyInfo getByName(String name) {
         // получаем компанию по имени или выбрасываем исключение
         CompanyEntity companyEntity = companyRepository.findByNameIgnoreCase(name.trim())
                 .orElseThrow(() -> {
@@ -72,7 +72,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(companyEntity.getId());
 
         // Преобразуем сущность компании в ДТО и возвращаем результат
-        CompanyDto result = CompanyMapper.mapEntityToDto(companyEntity, numberOfEmployees);
+        CompanyInfo result = CompanyMapper.mapEntityToInfo(companyEntity, numberOfEmployees);
         log.info("Company found by name: {}", result);
         return result;
     }
