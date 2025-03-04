@@ -1,8 +1,11 @@
 package com.agorohov.srp_stf.company_service.service.impl;
 
+import com.agorohov.srp_stf.company_service.dto.CompanyDto;
 import com.agorohov.srp_stf.company_service.dto.CompanyInfo;
+import com.agorohov.srp_stf.company_service.dto.CreateCompany;
 import com.agorohov.srp_stf.company_service.dto.UserDto;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
+import com.agorohov.srp_stf.company_service.exception.CompanyAlreadyExistsException;
 import com.agorohov.srp_stf.company_service.exception.CompanyNotFoundException;
 import com.agorohov.srp_stf.company_service.feign.UserServiceFeignClient;
 import com.agorohov.srp_stf.company_service.mapper.CompanyMapper;
@@ -50,7 +53,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(id);
 
         // Преобразуем сущность компании в ДТО
-        CompanyInfo result = CompanyMapper.mapEntityToInfo(companyEntity, numberOfEmployees);
+        CompanyInfo result = CompanyMapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
 
         log.info("Company found by id: {}", result);
         return result;
@@ -72,7 +75,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(companyEntity.getId());
 
         // Преобразуем сущность компании в ДТО и возвращаем результат
-        CompanyInfo result = CompanyMapper.mapEntityToInfo(companyEntity, numberOfEmployees);
+        CompanyInfo result = CompanyMapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
         log.info("Company found by name: {}", result);
         return result;
     }
@@ -132,6 +135,21 @@ public class CompanyServiceImpl implements CompanyService {
 
         log.info("Returned page of employees by company name = {}, number of employees: {}",
                 companyName, userDtos.size());
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public CompanyDto create(CreateCompany company) {
+        // Проверяем, нет ли уже компании с таким именем
+        if (companyRepository.existsByNameIgnoreCase(company.getName().trim())) {
+            throw new CompanyAlreadyExistsException("There is already a company with the name" + company.getName());
+        }
+        CompanyEntity entity = CompanyMapper.mapCreateCompanyToCompanyEntity(company);
+        // Сохраняем компанию в БД и маппим в CompanyDto, чтобы вернуть созданную компанию уже с ID
+        // (можно обойтись без этого и просто возвращать статус 201 Created вместо CompanyDto)
+        CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyRepository.save(entity));
+        log.info("Created company: {}", result);
         return result;
     }
 }

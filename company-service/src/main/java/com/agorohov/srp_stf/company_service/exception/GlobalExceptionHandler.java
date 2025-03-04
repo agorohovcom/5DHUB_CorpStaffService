@@ -59,4 +59,14 @@ public class GlobalExceptionHandler {
         log.error("MethodArgumentNotValidException occurred: {}", e.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
+
+    @ExceptionHandler(CompanyAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> companyAlreadyExistsException(CompanyAlreadyExistsException e) {
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setMessage(e.getMessage());
+        errorMessage.setTime(LocalDateTime.now());
+
+        log.error("CompanyAlreadyExistsException occurred: {}", e.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
 }
