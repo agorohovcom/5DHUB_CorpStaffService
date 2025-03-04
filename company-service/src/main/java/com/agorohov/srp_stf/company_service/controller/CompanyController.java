@@ -75,8 +75,8 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-//    @GetMapping
-//    public Page<CompanyDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-//        return companyService.getAll(pageable);
-//    }
+    @GetMapping
+    public Page<CompanyDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return companyService.getAll(pageable);
+    }
 }

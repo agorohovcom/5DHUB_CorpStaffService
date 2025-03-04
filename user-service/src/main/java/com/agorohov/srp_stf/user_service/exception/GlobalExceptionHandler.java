@@ -27,15 +27,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
-    @ExceptionHandler(PageNotFoundException.class)
-    public ResponseEntity<ErrorMessage> pageNotFoundException(PageNotFoundException e) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setMessage(e.getMessage());
-        errorMessage.setTime(LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-    }
-
     @ExceptionHandler(MapperException.class)
     public ResponseEntity<ErrorMessage> mapperException(MapperException e) {
         ErrorMessage errorMessage = new ErrorMessage();

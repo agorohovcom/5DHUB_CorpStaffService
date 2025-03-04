@@ -190,12 +190,25 @@ public class CompanyServiceImpl implements CompanyService {
 
     /**
      * Deletes company with taking ID, returns no data.
-     *
      * @param id company ID
      */
     @Override
     public void delete(long id) {
         companyRepository.deleteById(id);
         log.info("Company with id {} deleted", id);
+    }
+
+    @Override
+    public Page<CompanyDto> getAll(Pageable pageable) {
+        Page<CompanyEntity> companyPage = companyRepository.findAll(pageable);
+
+        List<CompanyDto> companyDtos = companyPage.getContent().stream()
+                .map(CompanyMapper::mapCompanyEntityToCompanyDto)
+                .toList();
+
+        PageImpl<CompanyDto> result = new PageImpl<>(
+                companyDtos, pageable, companyPage.getTotalElements());
+        log.info("Page with companies returned: {}", result);
+        return result;
     }
 }

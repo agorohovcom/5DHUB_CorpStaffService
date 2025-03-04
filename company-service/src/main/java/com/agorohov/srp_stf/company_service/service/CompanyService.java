@@ -20,4 +20,6 @@ public interface CompanyService {
     CompanyDto update(UpdateCompany company);
 
     void delete(long id);
+
+    Page<CompanyDto> getAll(Pageable pageable);
 }

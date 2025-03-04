@@ -4,7 +4,6 @@ import com.agorohov.srp_stf.user_service.dto.CreateUser;
 import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
-import com.agorohov.srp_stf.user_service.exception.PageNotFoundException;
 import com.agorohov.srp_stf.user_service.exception.UserNotFoundException;
 import com.agorohov.srp_stf.user_service.mapper.UserMapper;
 import com.agorohov.srp_stf.user_service.repository.UserRepository;
@@ -33,9 +32,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Takes a last name to search for users and a Pageable with page size and number,
      * returns a Page with UserDto objects.
-     * If the requested page number does not exist, throws PageNotFoundException.
      * If there is no user with the requested last name, throws UserNotFoundException.
-     *
      * @param lastName user's lastname
      * @param pageable Pageable object with size (default = 10) and page (default = 0)
      * @return Page object with UserDto objects found by lastname
@@ -50,15 +47,6 @@ public class UserServiceImpl implements UserService {
             String msg = "There aren't any users with lastname " + lastName;
             log.error(msg);
             throw new UserNotFoundException(msg);
-        }
-
-        // Проверяем, существует ли запрашиваемая страница
-        // (на случай если будет запрошена страница за пределами существующих)
-        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
-            String msg = String.format("Page %d doesn't exists, total pages: %d",
-                    pageable.getPageNumber(), employeePage.getTotalPages());
-            log.error(msg);
-            throw new PageNotFoundException(msg);
         }
 
         // Преобразуем сущности в ДТО
@@ -161,8 +149,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Returns all existing users is Pages with UserDto objects.
-     * If the requested page number does not exist, throws PageNotFoundException.
-     *
      * @param pageable Pageable object with size (default = 10) and page (default = 0)
      * @return Page object with pages of all existing  UserDto objects
      */
@@ -170,13 +156,6 @@ public class UserServiceImpl implements UserService {
     public Page<UserDto> getAll(Pageable pageable) {
         Page<UserEntity> employeePage = userRepository.findAll(pageable);
 
-        // Проверяем, существует ли запрашиваемая страница
-        if (pageable.getPageNumber() > employeePage.getTotalPages() - 1) {
-            String msg = String.format("Page %d doesn't exists, total pages: %d",
-                    pageable.getPageNumber(), employeePage.getTotalPages());
-            log.error(msg);
-            throw new PageNotFoundException(msg);
-        }
         // Преобразуем сущности в ДТО
         List<UserDto> employeeDtos = employeePage.getContent().stream()
                 .map(UserMapper::mapUserEntityToUserDto)
