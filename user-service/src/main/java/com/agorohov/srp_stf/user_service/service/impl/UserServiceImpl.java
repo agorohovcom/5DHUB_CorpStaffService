@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Returns all existing users is Pages with UserDto objects.
      * @param pageable Pageable object with size (default = 10) and page (default = 0)
-     * @return Page object with pages of all existing  UserDto objects
+     * @return Page object with all existing UserDto objects
      */
     @Override
     public Page<UserDto> getAll(Pageable pageable) {

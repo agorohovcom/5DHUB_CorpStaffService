@@ -34,6 +34,13 @@ public class CompanyServiceImpl implements CompanyService {
         this.userServiceFeignClient = userServiceFeignClient;
     }
 
+    /**
+     * Takes company ID and returns CompanyInfo object with extra field - number of employees of this company.
+     * If there is no company with this ID, throws CompanyNotFoundException.
+     *
+     * @param id company ID
+     * @return CompanyInfo object
+     */
     @Override
     @Transactional(readOnly = true)
     public CompanyInfo getById(long id) {
@@ -56,6 +63,12 @@ public class CompanyServiceImpl implements CompanyService {
         return result;
     }
 
+    /**
+     * Takes company name and returns CompanyInfo object with extra field - number of employees of this company.
+     * If there is no company with this name, throws CompanyNotFoundException.
+     * @param name name of company
+     * @return CompanyInfo
+     */
     @Override
     @Transactional(readOnly = true)
     public CompanyInfo getByName(String name) {
@@ -80,7 +93,7 @@ public class CompanyServiceImpl implements CompanyService {
     /**
      * Takes a company id and a Pageable object that contains the size and page parameters,
      * returns a list of employees of this company as a Page object.
-     *
+     * If there is no company with this ID, throws CompanyNotFoundException.
      * @param companyId company id
      * @param pageable  a Pageable object that contains the size and page parameters
      * @return Page object contains UserDto objects
@@ -108,7 +121,7 @@ public class CompanyServiceImpl implements CompanyService {
     /**
      * Takes a company name and a Pageable object that contains the size and page parameters,
      * returns a list of employees of this company as a Page object.
-     *
+     * If there is no company with this name, throws CompanyNotFoundException.
      * @param companyName company name
      * @param pageable    a Pageable object that contains the size and page parameters
      * @return Page object contains UserDto objects
@@ -135,6 +148,12 @@ public class CompanyServiceImpl implements CompanyService {
         return result;
     }
 
+    /**
+     * Takes CreateCompany object, saves company id DB and returns CompanyDto object with new user ID.
+     * If there is already a company with the same name, throws CompanyAlreadyExistsException.
+     * @param company CreateCompany object
+     * @return CompanyDto object
+     */
     @Override
     @Transactional
     public CompanyDto create(CreateCompany company) {
@@ -150,6 +169,12 @@ public class CompanyServiceImpl implements CompanyService {
         return result;
     }
 
+    /**
+     * Takes company ID and return found company in CompanyDto object.
+     * If there is no company with the requested ID, throws CompanyNotFoundException.
+     * @param id company ID
+     * @return CompanyDto object
+     */
     @Override
     public CompanyDto get(long id) {
         CompanyEntity companyEntity = companyRepository.findById(id)
@@ -163,7 +188,16 @@ public class CompanyServiceImpl implements CompanyService {
         return result;
     }
 
+    /**
+     * Takes UpdateCompany to update the company.
+     * If there is no company with the same ID, throws CompanyNotFoundException.
+     * If there is a company with the same ID as in UpdateCompany, and there are no other companies with the same name,
+     * updates the company and returns CompanyDto with the updated data.
+     * @param company UpdateCompany object
+     * @return CompanyDto object
+     */
     @Override
+    @Transactional
     public CompanyDto update(UpdateCompany company) {
         // Проверяем есть ли компания с таким ID, чтобы не создавать новую при попытке отредактировать несуществующую
         CompanyEntity existingCompany = companyRepository.findById(company.getId())
@@ -198,6 +232,11 @@ public class CompanyServiceImpl implements CompanyService {
         log.info("Company with id {} deleted", id);
     }
 
+    /**
+     * Returns all existing companies is Pages with CompanyDto objects.
+     * @param pageable Pageable object with default size and page
+     * @return Page object with all existing CompanyDto objects
+     */
     @Override
     public Page<CompanyDto> getAll(Pageable pageable) {
         Page<CompanyEntity> companyPage = companyRepository.findAll(pageable);
