@@ -3,6 +3,7 @@ package com.agorohov.srp_stf.company_service.mapper;
 import com.agorohov.srp_stf.company_service.dto.CompanyDto;
 import com.agorohov.srp_stf.company_service.dto.CompanyInfo;
 import com.agorohov.srp_stf.company_service.dto.CreateCompany;
+import com.agorohov.srp_stf.company_service.dto.UpdateCompany;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
 import com.agorohov.srp_stf.company_service.exception.MapperException;
 import org.slf4j.Logger;
@@ -53,4 +54,18 @@ public class CompanyMapper {
             throw new MapperException(ex);
         }
     }
+
+    public static CompanyEntity mapUpdateCompanyToCompanyEntity(UpdateCompany company) {
+        try {
+            CompanyEntity result = new CompanyEntity();
+            result.setId(company.getId());
+            result.setName(company.getName());
+            result.setBudget(company.getBudget());
+            return result;
+        } catch (Exception ex) {
+            log.error("Failed mapping UpdateCompany to CompanyEntity: {}", ex.getLocalizedMessage());
+            throw new MapperException(ex);
+        }
+    }
+
 }

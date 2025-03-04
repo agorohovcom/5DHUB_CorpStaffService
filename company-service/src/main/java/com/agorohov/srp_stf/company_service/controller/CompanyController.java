@@ -1,9 +1,6 @@
 package com.agorohov.srp_stf.company_service.controller;
 
-import com.agorohov.srp_stf.company_service.dto.CompanyDto;
-import com.agorohov.srp_stf.company_service.dto.CompanyInfo;
-import com.agorohov.srp_stf.company_service.dto.CreateCompany;
-import com.agorohov.srp_stf.company_service.dto.UserDto;
+import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.service.CompanyService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -67,11 +64,11 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.OK).body(companyService.get(id));
     }
 
-//    @PutMapping
-//    public ResponseEntity<CompanyDto> update(@Valid @RequestBody UpdateCompany company) {
-//        return ResponseEntity.status(HttpStatus.OK).body(companyService.update(company));
-//    }
-//
+    @PutMapping
+    public ResponseEntity<CompanyDto> update(@Valid @RequestBody UpdateCompany company) {
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.update(company));
+    }
+
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
 //        companyService.delete(id);

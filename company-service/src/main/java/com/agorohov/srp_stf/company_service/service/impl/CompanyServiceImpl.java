@@ -1,9 +1,6 @@
 package com.agorohov.srp_stf.company_service.service.impl;
 
-import com.agorohov.srp_stf.company_service.dto.CompanyDto;
-import com.agorohov.srp_stf.company_service.dto.CompanyInfo;
-import com.agorohov.srp_stf.company_service.dto.CreateCompany;
-import com.agorohov.srp_stf.company_service.dto.UserDto;
+import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
 import com.agorohov.srp_stf.company_service.exception.CompanyAlreadyExistsException;
 import com.agorohov.srp_stf.company_service.exception.CompanyNotFoundException;
@@ -163,6 +160,31 @@ public class CompanyServiceImpl implements CompanyService {
                 });
         CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity);
         log.info("Got company: {}", result);
+        return result;
+    }
+
+    @Override
+    public CompanyDto update(UpdateCompany company) {
+        // Проверяем есть ли компания с таким ID, чтобы не создавать новую при попытке отредактировать несуществующую
+        CompanyEntity existingCompany = companyRepository.findById(company.getId())
+                .orElseThrow(() -> {
+                    String msg = "No company with id " + company.getId();
+                    log.error("Fail update company: {}", msg);
+                    return new CompanyNotFoundException(msg);
+                });
+        // Проверяем, изменилось ли имя компании
+        if (!existingCompany.getName().equalsIgnoreCase(company.getName().trim())) {
+            // Если имя изменилось, проверяем нет ли уже компании с таким именем
+            if (companyRepository.existsByNameIgnoreCase(company.getName().trim())) {
+                throw new CompanyAlreadyExistsException("There is already a company with the name" + company.getName());
+            }
+        }
+        CompanyEntity companyEntity = CompanyMapper.mapUpdateCompanyToCompanyEntity(company);
+        companyRepository.save(companyEntity);
+        // Маппим обновленного юзера в CompanyDto и возвращаем результат
+        // (можно было вернуть 200 OK или тот же UpdateCompany, но хочется побыть дотошным)
+        CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity);
+        log.info("Updated company: {}", result);
         return result;
     }
 }
