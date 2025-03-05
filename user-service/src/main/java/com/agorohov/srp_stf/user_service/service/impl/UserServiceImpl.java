@@ -166,4 +166,13 @@ public class UserServiceImpl implements UserService {
         log.info("Page with users returned: {}", result);
         return result;
     }
+
+    /**
+     * @param id user ID
+     * @return exists by ID
+     */
+    @Override
+    public boolean existsById(long id) {
+        return userRepository.existsById(id);
+    }
 }

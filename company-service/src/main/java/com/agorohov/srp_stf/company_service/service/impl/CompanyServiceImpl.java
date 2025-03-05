@@ -4,6 +4,7 @@ import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
 import com.agorohov.srp_stf.company_service.exception.CompanyAlreadyExistsException;
 import com.agorohov.srp_stf.company_service.exception.CompanyNotFoundException;
+import com.agorohov.srp_stf.company_service.exception.UserNotFoundException;
 import com.agorohov.srp_stf.company_service.feign.UserServiceFeignClient;
 import com.agorohov.srp_stf.company_service.mapper.CompanyMapper;
 import com.agorohov.srp_stf.company_service.repository.CompanyRepository;
@@ -47,7 +48,7 @@ public class CompanyServiceImpl implements CompanyService {
         // получаем компанию по id или выбрасываем исключение
         CompanyEntity companyEntity = companyRepository.findById(id)
                 .orElseThrow(() -> {
-                    String msg = "Company with id " + id + " not found";
+                    String msg = String.format("Company with id %d not found", id);
                     log.error(msg);
                     return new CompanyNotFoundException(msg);
                 });
@@ -66,6 +67,7 @@ public class CompanyServiceImpl implements CompanyService {
     /**
      * Takes company name and returns CompanyInfo object with extra field - number of employees of this company.
      * If there is no company with this name, throws CompanyNotFoundException.
+     *
      * @param name name of company
      * @return CompanyInfo
      */
@@ -75,7 +77,7 @@ public class CompanyServiceImpl implements CompanyService {
         // получаем компанию по имени или выбрасываем исключение
         CompanyEntity companyEntity = companyRepository.findByNameIgnoreCase(name.trim())
                 .orElseThrow(() -> {
-                    String msg = "Company with name " + name + " not found";
+                    String msg = String.format("Company with name %s not found", name);
                     log.error(msg);
                     return new CompanyNotFoundException(msg);
                 });
@@ -94,6 +96,7 @@ public class CompanyServiceImpl implements CompanyService {
      * Takes a company id and a Pageable object that contains the size and page parameters,
      * returns a list of employees of this company as a Page object.
      * If there is no company with this ID, throws CompanyNotFoundException.
+     *
      * @param companyId company id
      * @param pageable  a Pageable object that contains the size and page parameters
      * @return Page object contains UserDto objects
@@ -103,7 +106,7 @@ public class CompanyServiceImpl implements CompanyService {
     public Page<UserDto> getUsersByCompanyId(long companyId, Pageable pageable) {
         // Проверяем существование компании
         if (!companyRepository.existsById(companyId)) {
-            String msg = "No employees, because company with id " + companyId + " not found";
+            String msg = String.format("No employees, because company with id %d not found", companyId);
             log.error(msg);
             throw new CompanyNotFoundException(msg);
         }
@@ -122,6 +125,7 @@ public class CompanyServiceImpl implements CompanyService {
      * Takes a company name and a Pageable object that contains the size and page parameters,
      * returns a list of employees of this company as a Page object.
      * If there is no company with this name, throws CompanyNotFoundException.
+     *
      * @param companyName company name
      * @param pageable    a Pageable object that contains the size and page parameters
      * @return Page object contains UserDto objects
@@ -132,7 +136,7 @@ public class CompanyServiceImpl implements CompanyService {
         // Проверяем существование компании
         long companyId = companyRepository.findByNameIgnoreCase(companyName.trim())
                 .orElseThrow(() -> {
-                    String msg = "No employees, because company with name " + companyName + " not found";
+                    String msg = String.format("No employees, because company with name %s not found", companyName);
                     log.error(msg);
                     return new CompanyNotFoundException(msg);
                 })
@@ -151,6 +155,7 @@ public class CompanyServiceImpl implements CompanyService {
     /**
      * Takes CreateCompany object, saves company id DB and returns CompanyDto object with new user ID.
      * If there is already a company with the same name, throws CompanyAlreadyExistsException.
+     *
      * @param company CreateCompany object
      * @return CompanyDto object
      */
@@ -172,6 +177,7 @@ public class CompanyServiceImpl implements CompanyService {
     /**
      * Takes company ID and return found company in CompanyDto object.
      * If there is no company with the requested ID, throws CompanyNotFoundException.
+     *
      * @param id company ID
      * @return CompanyDto object
      */
@@ -179,7 +185,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto get(long id) {
         CompanyEntity companyEntity = companyRepository.findById(id)
                 .orElseThrow(() -> {
-                    String msg = "No company with id " + id;
+                    String msg = String.format("No company with id %d", id);
                     log.error("Fail get company: {}", msg);
                     return new CompanyNotFoundException(msg);
                 });
@@ -193,6 +199,7 @@ public class CompanyServiceImpl implements CompanyService {
      * If there is no company with the same ID, throws CompanyNotFoundException.
      * If there is a company with the same ID as in UpdateCompany, and there are no other companies with the same name,
      * updates the company and returns CompanyDto with the updated data.
+     *
      * @param company UpdateCompany object
      * @return CompanyDto object
      */
@@ -202,7 +209,7 @@ public class CompanyServiceImpl implements CompanyService {
         // Проверяем есть ли компания с таким ID, чтобы не создавать новую при попытке отредактировать несуществующую
         CompanyEntity existingCompany = companyRepository.findById(company.getId())
                 .orElseThrow(() -> {
-                    String msg = "No company with id " + company.getId();
+                    String msg = String.format("No company with id %d", company.getId());
                     log.error("Fail update company: {}", msg);
                     return new CompanyNotFoundException(msg);
                 });
@@ -234,6 +241,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     /**
      * Returns all existing companies is Pages with CompanyDto objects.
+     *
      * @param pageable Pageable object with default size and page
      * @return Page object with all existing CompanyDto objects
      */
@@ -249,5 +257,36 @@ public class CompanyServiceImpl implements CompanyService {
                 companyDtos, pageable, companyPage.getTotalElements());
         log.info("Page with companies returned: {}", result);
         return result;
+    }
+
+    /**
+     * Takes the company ID and the employee ID. Check if there is a company with such an ID,
+     * if not, throws CompanyNotFoundException.
+     * Checks if there is a user with such an ID in the user-service microservice,
+     * if not, throws UserNotFoundException. Add the employee to the DB and return the EmployeeDto object.
+     *
+     * @param companyId  company ID where is adding employee
+     * @param employeeId employee ID corresponding user ID from user-service microservice
+     * @return EmployeeDto object
+     */
+    @Override
+    @Transactional
+    public EmployeeDto addEmployee(long companyId, long employeeId) {
+        // Если компании с companyId нет, возвращаем сообщение об ошибке
+        CompanyEntity companyEntity = companyRepository.findById(companyId)
+                .orElseThrow(() -> {
+                    String msg = String.format("No company with id %d", companyId);
+                    log.error(msg);
+                    return new CompanyNotFoundException(msg);
+                });
+
+        // Идём в микросервис user-service и проверяем, есть ли пользователь с таким ID
+        if (!userServiceFeignClient.existsById(employeeId)) {
+            String msg = String.format("User with id %d not found", employeeId);
+            log.error(msg);
+            throw new UserNotFoundException(msg);
+        }
+
+        return employeeService.addEmployee(CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity), employeeId);
     }
 }

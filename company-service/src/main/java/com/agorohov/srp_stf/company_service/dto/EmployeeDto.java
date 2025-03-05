@@ -28,4 +28,12 @@ public class EmployeeDto {
     public void setCompanyId(long companyId) {
         this.companyId = companyId;
     }
+
+    @Override
+    public String toString() {
+        return "EmployeeDto{" +
+                "userId=" + userId +
+                ", companyId=" + companyId +
+                '}';
+    }
 }

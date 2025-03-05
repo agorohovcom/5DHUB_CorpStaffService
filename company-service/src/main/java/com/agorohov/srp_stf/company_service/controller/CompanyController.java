@@ -40,8 +40,6 @@ public class CompanyController {
     public Page<UserDto> getUsersByCompanyId(
             @RequestParam("company-id") long companyId,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        log.info("Request received: \"/users-by-company-id?company-id={}&size={}&page={}\"",
-                companyId, pageable.getPageSize(), pageable.getPageNumber());
         return companyService.getUsersByCompanyId(companyId, pageable);
     }
 
@@ -49,8 +47,6 @@ public class CompanyController {
     public Page<UserDto> getUsersByCompanyName(
             @RequestParam("company-name") String companyName,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        log.info("Request received: \"/users-by-company-name?company-name={}&size={}&page={}\"",
-                companyName, pageable.getPageSize(), pageable.getPageNumber());
         return companyService.getUsersByCompanyName(companyName, pageable);
     }
 
@@ -78,5 +74,11 @@ public class CompanyController {
     @GetMapping
     public Page<CompanyDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         return companyService.getAll(pageable);
+    }
+
+    @PostMapping("/add-employee")
+    public ResponseEntity<EmployeeDto> addEmployee(
+            @RequestParam("company-id") long companyId, @RequestParam("employee-id") long employeeId) {
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.addEmployee(companyId, employeeId));
     }
 }

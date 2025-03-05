@@ -22,4 +22,6 @@ public interface UserService {
     void delete(long id);
 
     Page<UserDto> getAll(Pageable pageable);
+
+    boolean existsById(long id);
 }

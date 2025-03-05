@@ -1,10 +1,8 @@
 package com.agorohov.srp_stf.company_service.mapper;
 
-import com.agorohov.srp_stf.company_service.dto.CompanyDto;
-import com.agorohov.srp_stf.company_service.dto.CompanyInfo;
-import com.agorohov.srp_stf.company_service.dto.CreateCompany;
-import com.agorohov.srp_stf.company_service.dto.UpdateCompany;
+import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
+import com.agorohov.srp_stf.company_service.entity.EmployeeEntity;
 import com.agorohov.srp_stf.company_service.exception.MapperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,4 +66,28 @@ public class CompanyMapper {
         }
     }
 
+    public static CompanyEntity mapCompanyDtoToCompanyEntityWithoutEmployees(CompanyDto companyDto) {
+        try {
+            CompanyEntity result = new CompanyEntity();
+            result.setId(companyDto.getId());
+            result.setName(companyDto.getName());
+            result.setBudget(companyDto.getBudget());
+            return result;
+        } catch (Exception ex) {
+            log.error("Failed mapping CompanyDto to CompanyEntity: {}", ex.getLocalizedMessage());
+            throw new MapperException(ex);
+        }
+    }
+
+    public static EmployeeDto mapEmployeeEntityToEmployeeDto(EmployeeEntity entity) {
+        try {
+            EmployeeDto result = new EmployeeDto();
+            result.setUserId(entity.getUserId());
+            result.setCompanyId(entity.getCompany().getId());
+            return result;
+        } catch (Exception ex) {
+            log.error("Failed mapping EmployeeEntity to EmployeeDto: {}", ex.getLocalizedMessage());
+            throw new MapperException(ex);
+        }
+    }
 }

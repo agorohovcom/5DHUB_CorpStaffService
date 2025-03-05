@@ -56,17 +56,17 @@ public class GlobalExceptionHandler {
         errorMessage.setMessage(message);
         errorMessage.setTime(LocalDateTime.now());
 
-        log.error("MethodArgumentNotValidException occurred: {}", e.getLocalizedMessage());
+        log.error("Validation fail: {}", e.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
-    @ExceptionHandler(CompanyAlreadyExistsException.class)
-    public ResponseEntity<ErrorMessage> companyAlreadyExistsException(CompanyAlreadyExistsException e) {
+    @ExceptionHandler({CompanyAlreadyExistsException.class, EmployeeAlreadyExistsException.class})
+    public ResponseEntity<ErrorMessage> alreadyExistsException(RuntimeException e) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(e.getMessage());
         errorMessage.setTime(LocalDateTime.now());
 
-        log.error("CompanyAlreadyExistsException occurred: {}", e.getLocalizedMessage());
+        log.error("Addition fail: {}", e.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 }

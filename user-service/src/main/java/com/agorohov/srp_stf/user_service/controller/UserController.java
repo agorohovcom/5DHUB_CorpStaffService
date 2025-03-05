@@ -61,4 +61,10 @@ public class UserController {
     public Page<UserDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         return userService.getAll(pageable);
     }
+
+    // TODO или вернуть просто boolean?
+    @GetMapping("/exists/{id}")
+    public ResponseEntity<Boolean> existsById(@PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.existsById(id));
+    }
 }
