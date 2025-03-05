@@ -35,10 +35,7 @@ class UserServiceImplTest {
     private UserMapper mapper;
 
     @InjectMocks
-    private UserServiceImpl userService;
-
-    private UserEntity userEntity;
-    private UserDto userDto;
+    private UserServiceImpl out;
 
     private static final long ID = 1L;
     private static final String FIRST_NAME = "John";
@@ -47,6 +44,9 @@ class UserServiceImplTest {
 
     private static final long UNKNOWN_ID = 101L;
     private static final String UNKNOWN_FIRST_NAME = "Vitaliy";
+
+    private UserEntity userEntity;
+    private UserDto userDto;
 
     @BeforeEach
     void setup() {
@@ -60,7 +60,7 @@ class UserServiceImplTest {
         when(userRepository.findByLastNameIgnoreCase(anyString(), any(Pageable.class))).thenReturn(page);
         when(mapper.mapUserEntityToUserDto(any(UserEntity.class))).thenReturn(userDto);
 
-        Page<UserDto> actual = userService.getByLastName(FIRST_NAME, PageRequest.of(0, 10));
+        Page<UserDto> actual = out.getByLastName(FIRST_NAME, PageRequest.of(0, 10));
 
         assertEquals(1, actual.getContent().size());
         assertEquals(ID, actual.getContent().get(0).getId());
@@ -72,7 +72,7 @@ class UserServiceImplTest {
         when(userRepository.findByLastNameIgnoreCase(anyString(), any(Pageable.class))).thenReturn(Page.empty());
 
         assertThrows(UserNotFoundException.class,
-                () -> userService.getByLastName(UNKNOWN_FIRST_NAME, PageRequest.of(0, 10)));
+                () -> out.getByLastName(UNKNOWN_FIRST_NAME, PageRequest.of(0, 10)));
     }
 
     @Test
@@ -80,7 +80,7 @@ class UserServiceImplTest {
         when(userRepository.findAllById(List.of(ID))).thenReturn(List.of(userEntity));
         when(mapper.mapUserEntityToUserDto(any(UserEntity.class))).thenReturn(userDto);
 
-        List<UserDto> actual = userService.getUsersByIds(List.of(1L));
+        List<UserDto> actual = out.getUsersByIds(List.of(1L));
 
         assertEquals(1, actual.size());
         assertEquals(ID, actual.get(0).getId());
@@ -91,7 +91,7 @@ class UserServiceImplTest {
     void getUsersByIds_test_emptyList() {
         when(userRepository.findAllById(List.of(ID))).thenReturn(List.of());
 
-        List<UserDto> actual = userService.getUsersByIds(List.of(1L));
+        List<UserDto> actual = out.getUsersByIds(List.of(1L));
 
         assertTrue(actual.isEmpty());
     }
@@ -103,7 +103,7 @@ class UserServiceImplTest {
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
         when(mapper.mapUserEntityToUserDto(any(UserEntity.class))).thenReturn(userDto);
 
-        UserDto actual = userService.create(createUser);
+        UserDto actual = out.create(createUser);
 
         assertEquals(userDto, actual);
     }
@@ -113,7 +113,7 @@ class UserServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(userEntity));
         when(mapper.mapUserEntityToUserDto(any(UserEntity.class))).thenReturn(userDto);
 
-        UserDto actual = userService.get(1L);
+        UserDto actual = out.get(1L);
 
         assertEquals(userDto, actual);
         assertEquals(ID, actual.getId());
@@ -123,7 +123,7 @@ class UserServiceImplTest {
     void get_test_notFound() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.get(UNKNOWN_ID));
+        assertThrows(UserNotFoundException.class, () -> out.get(UNKNOWN_ID));
     }
 
     @Test
@@ -137,7 +137,7 @@ class UserServiceImplTest {
         when(userRepository.save(any(UserEntity.class))).thenReturn(updatedUserEntity);
         when(mapper.mapUserEntityToUserDto(any(UserEntity.class))).thenReturn(updatedUserDto);
 
-        UserDto actual = userService.update(updateUser);
+        UserDto actual = out.update(updateUser);
 
         assertEquals(updatedUserDto, actual);
     }
@@ -147,12 +147,12 @@ class UserServiceImplTest {
         UpdateUser updateUser = new UpdateUser(ID, UNKNOWN_FIRST_NAME, LAST_NAME, PHONE_NUMBER);
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.update(updateUser));
+        assertThrows(UserNotFoundException.class, () -> out.update(updateUser));
     }
 
     @Test
     void delete_test_success() {
-        userService.delete(1L);
+        out.delete(1L);
 
         verify(userRepository, times(1)).deleteById(ID);
     }
@@ -163,7 +163,7 @@ class UserServiceImplTest {
         when(userRepository.findAll(any(Pageable.class))).thenReturn(page);
         when(mapper.mapUserEntityToUserDto(any(UserEntity.class))).thenReturn(userDto);
 
-        Page<UserDto> actual = userService.getAll(PageRequest.of(0, 10));
+        Page<UserDto> actual = out.getAll(PageRequest.of(0, 10));
 
         assertEquals(1, actual.getContent().size());
         assertEquals(ID, actual.getContent().get(0).getId());
@@ -174,13 +174,13 @@ class UserServiceImplTest {
     void existsById_test_true() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
 
-        assertTrue(userService.existsById(1L));
+        assertTrue(out.existsById(1L));
     }
 
     @Test
     void existsById_test_false() {
         when(userRepository.existsById(anyLong())).thenReturn(false);
 
-        assertFalse(userService.existsById(1L));
+        assertFalse(out.existsById(1L));
     }
 }
