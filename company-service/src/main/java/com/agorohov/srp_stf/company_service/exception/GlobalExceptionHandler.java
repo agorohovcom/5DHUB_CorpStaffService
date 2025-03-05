@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorMessage> employeeNotFoundException(CompanyNotFoundException e) {
+    @ExceptionHandler({UserNotFoundException.class, CompanyNotFoundException.class})
+    public ResponseEntity<ErrorMessage> notFoundException(RuntimeException e) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(e.getMessage());
         errorMessage.setTime(LocalDateTime.now());
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(MapperException.class)
     public ResponseEntity<ErrorMessage> mapperException(MapperException e) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage("Internal server error, please try again later");
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorMessage> feignException(FeignException e) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage("Server is not available now, try again later");

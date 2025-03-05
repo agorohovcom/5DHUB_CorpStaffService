@@ -67,6 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return EmployeeDto object
      */
     @Override
+    @Transactional
     public EmployeeDto addEmployee(CompanyDto companyDto, long employeeId) {
         // Проверяем нет ли уже такого работника. Если есть, при сохранении мы рискуем перезаписать его связь
         // с другой компанией, поэтому сохраняем только если такого пока нет
@@ -83,5 +84,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeDto result = CompanyMapper.mapEmployeeEntityToEmployeeDto(employeeRepository.save(employeeEntity));
         log.info("Added new employee: {}", result);
         return result;
+    }
+
+    /**
+     * @param employeeId employee ID
+     */
+    @Override
+    public void deleteEmployee(long employeeId) {
+        employeeRepository.deleteById(employeeId);
     }
 }

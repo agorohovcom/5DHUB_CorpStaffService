@@ -289,4 +289,24 @@ public class CompanyServiceImpl implements CompanyService {
 
         return employeeService.addEmployee(CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity), employeeId);
     }
+
+    /**
+     * ID of the company from which the employee needs to be removed.
+     * If there is no company with such an ID, it is throws CompanyNotFoundException.
+     *
+     * @param companyId  company ID.
+     * @param employeeId employee ID.
+     */
+    @Override
+    @Transactional
+    public void deleteEmployee(long companyId, long employeeId) {
+        // Если компании с companyId нет, возвращаем сообщение об ошибке
+        CompanyEntity companyEntity = companyRepository.findById(companyId)
+                .orElseThrow(() -> {
+                    String msg = String.format("No company with id %d", companyId);
+                    log.error(msg);
+                    return new CompanyNotFoundException(msg);
+                });
+        employeeService.deleteEmployee(employeeId);
+    }
 }

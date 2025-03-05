@@ -24,9 +24,11 @@ public class UserServiceImpl implements UserService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final UserRepository userRepository;
+    private final UserMapper mapper;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper mapper) {
         this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
         // Преобразуем сущности в ДТО
         List<UserDto> employeeDtos = employeePage.getContent().stream()
-                .map(UserMapper::mapUserEntityToUserDto)
+                .map(mapper::mapUserEntityToUserDto)
                 .toList();
 
         PageImpl<UserDto> result = new PageImpl<>(
@@ -69,7 +71,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsersByIds(List<Long> ids) {
         List<UserEntity> userEntities = userRepository.findAllById(ids);
         List<UserDto> result = userEntities.stream()
-                .map(UserMapper::mapUserEntityToUserDto)
+                .map(mapper::mapUserEntityToUserDto)
                 .toList();
         log.info("Returned list with {} instances of UserDto", result.size());
         return result;
@@ -82,10 +84,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDto create(CreateUser user) {
-        UserEntity entity = UserMapper.mapCreateUserToUserEntity(user);
+        UserEntity entity = mapper.mapCreateUserToUserEntity(user);
         // Сохраняем юзера в БД и маппим в UserDto, чтобы вернуть созданного юзера уже с ID
         // (можно обойтись без этого и просто возвращать статус 201 Created вместо UserDto)
-        UserDto result = UserMapper.mapUserEntityToUserDto(userRepository.save(entity));
+        UserDto result = mapper.mapUserEntityToUserDto(userRepository.save(entity));
         log.info("Created user: {}", result);
         return result;
     }
@@ -104,7 +106,7 @@ public class UserServiceImpl implements UserService {
                     log.error("Fail get user: {}", msg);
                     return new UserNotFoundException(msg);
                 });
-        UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
+        UserDto result = mapper.mapUserEntityToUserDto(userEntity);
         log.info("Got user: {}", result);
         return result;
     }
@@ -128,11 +130,11 @@ public class UserServiceImpl implements UserService {
                     return new UserNotFoundException(msg);
                 });
         // Маппим в UserEntity и сохраняем
-        UserEntity userEntity = UserMapper.mapUpdateUserToUserEntity(user);
+        UserEntity userEntity = mapper.mapUpdateUserToUserEntity(user);
         userRepository.save(userEntity);
         // Маппим обновленного юзера в UserDto и возвращаем результат
         // (можно было вернуть 200 OK или тот же UpdateUser, но хочется побыть дотошным)
-        UserDto result = UserMapper.mapUserEntityToUserDto(userEntity);
+        UserDto result = mapper.mapUserEntityToUserDto(userEntity);
         log.info("Updated user: {}", result);
         return result;
     }
@@ -158,7 +160,7 @@ public class UserServiceImpl implements UserService {
 
         // Преобразуем сущности в ДТО
         List<UserDto> employeeDtos = employeePage.getContent().stream()
-                .map(UserMapper::mapUserEntityToUserDto)
+                .map(mapper::mapUserEntityToUserDto)
                 .toList();
 
         PageImpl<UserDto> result = new PageImpl<>(

@@ -24,14 +24,14 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @GetMapping("/info-by-id")
-    public ResponseEntity<CompanyInfo> getInfoById(@RequestParam("id") long id) {
+    @GetMapping("/info-by-id/{id}")
+    public ResponseEntity<CompanyInfo> getInfoById(@PathVariable("id") long id) {
         log.info("Request received: \"/by-id/{}\"", id);
         return ResponseEntity.ok().body(companyService.getById(id));
     }
 
-    @GetMapping("/info-by-name")
-    public ResponseEntity<CompanyInfo> getInfoByName(@RequestParam("name") String name) {
+    @GetMapping("/info-by-name/{name}")
+    public ResponseEntity<CompanyInfo> getInfoByName(@PathVariable("name") String name) {
         log.info("Request received: \"/by-name/{}\"", name);
         return ResponseEntity.ok().body(companyService.getByName(name));
     }
@@ -80,5 +80,12 @@ public class CompanyController {
     public ResponseEntity<EmployeeDto> addEmployee(
             @RequestParam("company-id") long companyId, @RequestParam("employee-id") long employeeId) {
         return ResponseEntity.status(HttpStatus.OK).body(companyService.addEmployee(companyId, employeeId));
+    }
+
+    @DeleteMapping("/delete-employee")
+    public ResponseEntity<Void> deleteEmployee(
+            @RequestParam("company-id") long companyId, @RequestParam("employee-id") long employeeId) {
+        companyService.deleteEmployee(companyId, employeeId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

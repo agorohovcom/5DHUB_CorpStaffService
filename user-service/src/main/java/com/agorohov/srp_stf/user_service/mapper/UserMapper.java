@@ -7,12 +7,14 @@ import com.agorohov.srp_stf.user_service.entity.UserEntity;
 import com.agorohov.srp_stf.user_service.exception.MapperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
 
     private static final Logger log = LoggerFactory.getLogger(UserMapper.class);
 
-    public static UserDto mapUserEntityToUserDto(UserEntity entity) {
+    public UserDto mapUserEntityToUserDto(UserEntity entity) {
         try {
             return new UserDto(
                     entity.getId(),
@@ -25,7 +27,7 @@ public class UserMapper {
         }
     }
 
-    public static UserEntity mapCreateUserToUserEntity(CreateUser user) {
+    public UserEntity mapCreateUserToUserEntity(CreateUser user) {
         try {
             UserEntity result = new UserEntity();
             result.setFirstName(user.getFirstName());
@@ -38,7 +40,7 @@ public class UserMapper {
         }
     }
 
-    public static UserEntity mapUpdateUserToUserEntity(UpdateUser user) {
+    public UserEntity mapUpdateUserToUserEntity(UpdateUser user) {
         try {
             UserEntity result = new UserEntity();
             result.setId(user.getId());

@@ -24,4 +24,6 @@ public interface CompanyService {
     Page<CompanyDto> getAll(Pageable pageable);
 
     EmployeeDto addEmployee(long companyId, long employeeId);
+
+    void deleteEmployee(long companyId, long employeeId);
 }

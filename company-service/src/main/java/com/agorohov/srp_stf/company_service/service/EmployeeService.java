@@ -13,4 +13,6 @@ public interface EmployeeService {
     boolean existsById(long id);
 
     EmployeeDto addEmployee(CompanyDto companyDto, long employeeId);
+
+    void deleteEmployee(long employeeId);
 }
