@@ -79,7 +79,7 @@ class EmployeeServiceImplTest {
 
     @Test
     void existsById_test_true() {
-        when(employeeRepository.existsById(EMPLOYEE_ID)).thenReturn(Boolean.TRUE);
+        when(employeeRepository.existsById(EMPLOYEE_ID)).thenReturn(true);
 
         boolean actual = out.existsById(EMPLOYEE_ID);
 
@@ -88,7 +88,7 @@ class EmployeeServiceImplTest {
 
     @Test
     void existsById_test_false() {
-        when(employeeRepository.existsById(anyLong())).thenReturn(Boolean.FALSE);
+        when(employeeRepository.existsById(anyLong())).thenReturn(false);
 
         boolean actual = out.existsById(EMPLOYEE_ID);
 
@@ -97,7 +97,7 @@ class EmployeeServiceImplTest {
 
     @Test
     void addEmployee_test_success() {
-        when(employeeRepository.existsById(anyLong())).thenReturn(Boolean.FALSE);
+        when(employeeRepository.existsById(anyLong())).thenReturn(false);
         when(employeeRepository.save(any(EmployeeEntity.class))).thenReturn(employeeEntity);
         when(mapper.mapCompanyDtoToCompanyEntityWithoutEmployees(any(CompanyDto.class)))
                 .thenReturn(companyEntityWithoutEmployeesList);
@@ -110,7 +110,7 @@ class EmployeeServiceImplTest {
 
     @Test
     void addEmployee_test_fail() {
-        when(employeeRepository.existsById(anyLong())).thenReturn(Boolean.TRUE);
+        when(employeeRepository.existsById(anyLong())).thenReturn(true);
 
         assertThrows(EmployeeAlreadyExistsException.class, () -> out.addEmployee(companyDto, EMPLOYEE_ID));
     }
