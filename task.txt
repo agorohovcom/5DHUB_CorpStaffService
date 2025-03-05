@@ -1,0 +1,8 @@
+Task for java developers:
+It is necessary to design and write two services that will communicate using REST using Spring cloud technologies.
+The application alone has a REST interface that will have user records (Ind. Number, First Name, Last Name, Phone number) and a growth that provides information on the last name of the user with this information.
+The second service stores information about the company's employees (company name, budget, and list of employees (ind. Numbers) ) and provides a REST that will provide information about the company by the company identification number or name.
+It is necessary to write Docker compose - which raises services and provides services to the outside via http
+Technology - java ? (Version - discuss)
+Spring Boot (spring cloud, spring web, spring data) for services and linking them
+Any database that supports in-memory operation (for example, H2 Database)
