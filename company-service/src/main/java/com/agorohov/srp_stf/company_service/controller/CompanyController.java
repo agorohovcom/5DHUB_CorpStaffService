@@ -2,6 +2,7 @@ package com.agorohov.srp_stf.company_service.controller;
 
 import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.service.CompanyService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +40,14 @@ public class CompanyController {
     @GetMapping("/employees-by-company-id")
     public Page<UserDto> getUsersByCompanyId(
             @RequestParam("company-id") long companyId,
-            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+            @PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
         return companyService.getUsersByCompanyId(companyId, pageable);
     }
 
     @GetMapping("/employees-by-company-name")
     public Page<UserDto> getUsersByCompanyName(
             @RequestParam("company-name") String companyName,
-            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+            @PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
         return companyService.getUsersByCompanyName(companyName, pageable);
     }
 
@@ -72,7 +73,7 @@ public class CompanyController {
     }
 
     @GetMapping
-    public Page<CompanyDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+    public Page<CompanyDto> getAll(@PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
         return companyService.getAll(pageable);
     }
 

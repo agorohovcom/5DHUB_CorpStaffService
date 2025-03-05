@@ -4,6 +4,7 @@ import com.agorohov.srp_stf.user_service.dto.CreateUser;
 import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.service.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class UserController {
     @GetMapping("/by-lastname")
     public Page<UserDto> getByLastName(
             @RequestParam("lastname") String lastName,
-            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+            @PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
         return userService.getByLastName(lastName, pageable);
     }
 
@@ -58,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping
-    public Page<UserDto> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+    public Page<UserDto> getAll(@PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
         return userService.getAll(pageable);
     }
 
