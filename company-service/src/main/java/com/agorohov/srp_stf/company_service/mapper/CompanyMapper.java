@@ -6,12 +6,14 @@ import com.agorohov.srp_stf.company_service.entity.EmployeeEntity;
 import com.agorohov.srp_stf.company_service.exception.MapperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CompanyMapper {
 
     private static final Logger log = LoggerFactory.getLogger(CompanyMapper.class);
 
-    public static CompanyDto mapCompanyEntityToCompanyDto(CompanyEntity entity) {
+    public CompanyDto mapCompanyEntityToCompanyDto(CompanyEntity entity) {
         try {
             CompanyDto result = new CompanyDto();
             result.setId(entity.getId());
@@ -24,7 +26,7 @@ public class CompanyMapper {
         }
     }
 
-    public static CompanyInfo mapCompanyEntityToCompanyInfo(CompanyEntity entity, int numberOfEmployees) {
+    public CompanyInfo mapCompanyEntityToCompanyInfo(CompanyEntity entity, int numberOfEmployees) {
         try {
             CompanyInfo result = new CompanyInfo();
             result.setId(entity.getId());
@@ -38,10 +40,7 @@ public class CompanyMapper {
         }
     }
 
-    private CompanyMapper() {
-    }
-
-    public static CompanyEntity mapCreateCompanyToCompanyEntity(CreateCompany company) {
+    public CompanyEntity mapCreateCompanyToCompanyEntity(CreateCompany company) {
         try {
             CompanyEntity result = new CompanyEntity();
             result.setName(company.getName().trim());
@@ -53,7 +52,7 @@ public class CompanyMapper {
         }
     }
 
-    public static CompanyEntity mapUpdateCompanyToCompanyEntity(UpdateCompany company) {
+    public CompanyEntity mapUpdateCompanyToCompanyEntity(UpdateCompany company) {
         try {
             CompanyEntity result = new CompanyEntity();
             result.setId(company.getId());
@@ -66,7 +65,7 @@ public class CompanyMapper {
         }
     }
 
-    public static CompanyEntity mapCompanyDtoToCompanyEntityWithoutEmployees(CompanyDto companyDto) {
+    public CompanyEntity mapCompanyDtoToCompanyEntityWithoutEmployees(CompanyDto companyDto) {
         try {
             CompanyEntity result = new CompanyEntity();
             result.setId(companyDto.getId());
@@ -79,7 +78,7 @@ public class CompanyMapper {
         }
     }
 
-    public static EmployeeDto mapEmployeeEntityToEmployeeDto(EmployeeEntity entity) {
+    public EmployeeDto mapEmployeeEntityToEmployeeDto(EmployeeEntity entity) {
         try {
             EmployeeDto result = new EmployeeDto();
             result.setUserId(entity.getUserId());
@@ -89,5 +88,8 @@ public class CompanyMapper {
             log.error("Failed mapping EmployeeEntity to EmployeeDto: {}", ex.getLocalizedMessage());
             throw new MapperException(ex);
         }
+    }
+
+    private CompanyMapper() {
     }
 }

@@ -28,11 +28,13 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final EmployeeService employeeService;
     private final UserServiceFeignClient userServiceFeignClient;
+    private final CompanyMapper mapper;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, EmployeeService employeeService, UserServiceFeignClient userServiceFeignClient) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, EmployeeService employeeService, UserServiceFeignClient userServiceFeignClient, CompanyMapper mapper) {
         this.companyRepository = companyRepository;
         this.employeeService = employeeService;
         this.userServiceFeignClient = userServiceFeignClient;
+        this.mapper = mapper;
     }
 
     /**
@@ -58,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(id);
 
         // Преобразуем сущность компании в ДТО
-        CompanyInfo result = CompanyMapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
+        CompanyInfo result = mapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
 
         log.info("Company found by id: {}", result);
         return result;
@@ -87,7 +89,7 @@ public class CompanyServiceImpl implements CompanyService {
         int numberOfEmployees = employeeService.getNumberOfEmployeesByCompanyId(companyEntity.getId());
 
         // Преобразуем сущность компании в ДТО и возвращаем результат
-        CompanyInfo result = CompanyMapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
+        CompanyInfo result = mapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
         log.info("Company found by name: {}", result);
         return result;
     }
@@ -166,10 +168,10 @@ public class CompanyServiceImpl implements CompanyService {
         if (companyRepository.existsByNameIgnoreCase(company.getName().trim())) {
             throw new CompanyAlreadyExistsException("There is already a company with the name" + company.getName());
         }
-        CompanyEntity entity = CompanyMapper.mapCreateCompanyToCompanyEntity(company);
+        CompanyEntity entity = mapper.mapCreateCompanyToCompanyEntity(company);
         // Сохраняем компанию в БД и маппим в CompanyDto, чтобы вернуть созданную компанию уже с ID
         // (можно обойтись без этого и просто возвращать статус 201 Created вместо CompanyDto)
-        CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyRepository.save(entity));
+        CompanyDto result = mapper.mapCompanyEntityToCompanyDto(companyRepository.save(entity));
         log.info("Created company: {}", result);
         return result;
     }
@@ -189,7 +191,7 @@ public class CompanyServiceImpl implements CompanyService {
                     log.error("Fail get company: {}", msg);
                     return new CompanyNotFoundException(msg);
                 });
-        CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity);
+        CompanyDto result = mapper.mapCompanyEntityToCompanyDto(companyEntity);
         log.info("Got company: {}", result);
         return result;
     }
@@ -220,11 +222,11 @@ public class CompanyServiceImpl implements CompanyService {
                 throw new CompanyAlreadyExistsException("There is already a company with the name" + company.getName());
             }
         }
-        CompanyEntity companyEntity = CompanyMapper.mapUpdateCompanyToCompanyEntity(company);
+        CompanyEntity companyEntity = mapper.mapUpdateCompanyToCompanyEntity(company);
         companyRepository.save(companyEntity);
         // Маппим обновленного юзера в CompanyDto и возвращаем результат
         // (можно было вернуть 200 OK или тот же UpdateCompany, но хочется побыть дотошным)
-        CompanyDto result = CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity);
+        CompanyDto result = mapper.mapCompanyEntityToCompanyDto(companyEntity);
         log.info("Updated company: {}", result);
         return result;
     }
@@ -250,7 +252,7 @@ public class CompanyServiceImpl implements CompanyService {
         Page<CompanyEntity> companyPage = companyRepository.findAll(pageable);
 
         List<CompanyDto> companyDtos = companyPage.getContent().stream()
-                .map(CompanyMapper::mapCompanyEntityToCompanyDto)
+                .map(mapper::mapCompanyEntityToCompanyDto)
                 .toList();
 
         PageImpl<CompanyDto> result = new PageImpl<>(
@@ -287,7 +289,7 @@ public class CompanyServiceImpl implements CompanyService {
             throw new UserNotFoundException(msg);
         }
 
-        return employeeService.addEmployee(CompanyMapper.mapCompanyEntityToCompanyDto(companyEntity), employeeId);
+        return employeeService.addEmployee(mapper.mapCompanyEntityToCompanyDto(companyEntity), employeeId);
     }
 
     /**

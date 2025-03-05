@@ -20,9 +20,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final EmployeeRepository employeeRepository;
+    private final CompanyMapper mapper;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, CompanyMapper mapper) {
         this.employeeRepository = employeeRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -79,9 +81,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         EmployeeEntity employeeEntity = new EmployeeEntity();
         employeeEntity.setUserId(employeeId);
-        employeeEntity.setCompany(CompanyMapper.mapCompanyDtoToCompanyEntityWithoutEmployees(companyDto));
+        employeeEntity.setCompany(mapper.mapCompanyDtoToCompanyEntityWithoutEmployees(companyDto));
 
-        EmployeeDto result = CompanyMapper.mapEmployeeEntityToEmployeeDto(employeeRepository.save(employeeEntity));
+        EmployeeDto result = mapper.mapEmployeeEntityToEmployeeDto(employeeRepository.save(employeeEntity));
         log.info("Added new employee: {}", result);
         return result;
     }
