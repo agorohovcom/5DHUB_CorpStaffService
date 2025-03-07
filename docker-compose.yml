@@ -1,56 +1,3 @@
-#version: '3.8'
-#
-#services:
-#  eureka-server:
-#    image: openjdk:17-jdk-alpine
-#    container_name: eureka-server
-#    ports:
-#      - "8761:8761"
-#    volumes:
-#      - ./eureka-server/target:/app
-#    working_dir: /app
-#    command: sh -c "java -jar $(ls *.jar)"
-#    networks:
-#      - spring-cloud-network
-#
-#  user-service:
-#    image: openjdk:17-jdk-alpine
-#    container_name: user-service
-#    ports:
-#      - "8081:8081"
-#    volumes:
-#      - ./user-service/target:/app
-#      - ./user-service/src/main/resources/db:/data
-#    working_dir: /app
-#    command: sh -c "java -jar $(ls *.jar)"
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=docker
-#    depends_on:
-#      - eureka-server
-#    networks:
-#      - spring-cloud-network
-#
-#  company-service:
-#    image: openjdk:17-jdk-alpine
-#    container_name: company-service
-#    ports:
-#      - "8082:8082"
-#    volumes:
-#      - ./company-service/target:/app
-#      - ./company-service/src/main/resources/db:/data
-#    working_dir: /app
-#    command: sh -c "java -jar $(ls *.jar)"
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=docker
-#    depends_on:
-#      - eureka-server
-#    networks:
-#      - spring-cloud-network
-#
-#networks:
-#  spring-cloud-network:
-#    driver: bridge
-
 version: '3.8'
 
 services:
@@ -58,16 +5,19 @@ services:
     image: openjdk:17-jdk-alpine
     container_name: gateway-server
     ports:
-      - "8080:8080"  # Порт Gateway
+      - "8080:8080"
     volumes:
       - ./gateway-server/target:/app
     working_dir: /app
     command: sh -c "java -jar $(ls *.jar)"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
     depends_on:
       - user-service
       - company-service
+      - consul
     networks:
       - spring-cloud-network
 
@@ -83,6 +33,8 @@ services:
     command: sh -c "java -jar $(ls *.jar)"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
     networks:
       - spring-cloud-network
 
@@ -98,8 +50,19 @@ services:
     command: sh -c "java -jar $(ls *.jar)"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
     networks:
       - spring-cloud-network
+
+  consul:
+    image: consul:1.15.4
+    container_name: consul
+    ports:
+      - "8500:8500"
+    networks:
+      - spring-cloud-network
+    command: "consul agent -dev -client=0.0.0.0"
 
 networks:
   spring-cloud-network:
