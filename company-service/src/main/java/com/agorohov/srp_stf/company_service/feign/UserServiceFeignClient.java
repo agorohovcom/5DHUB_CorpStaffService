@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "user-service")
+@FeignClient(name = "user-service", url = "${feign.user-service.url}")
 public interface UserServiceFeignClient {
 
     @GetMapping("/users/by-ids")
@@ -16,8 +16,4 @@ public interface UserServiceFeignClient {
 
     @GetMapping("/users/exists/{id}")
     boolean existsById(@PathVariable("id") long id);
-
-    // TODO удалить?
-//    @GetMapping("users/{id}")
-//    UserDto getUserByIds(@PathVariable("id") long id);
 }

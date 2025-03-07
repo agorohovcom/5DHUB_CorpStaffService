@@ -1,10 +1,10 @@
-package com.agorohov.srp_stf.eureka_server;
+package com.agorohov.srp_stf.gateway_server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EurekaServerApplicationTests {
+class GatewayServerApplicationTests {
 
     @Test
     void contextLoads() {
