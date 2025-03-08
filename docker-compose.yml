@@ -14,10 +14,12 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
     depends_on:
       - user-service
       - company-service
       - consul
+      - config-server
     networks:
       - spring-cloud-network
 
@@ -35,6 +37,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
     networks:
       - spring-cloud-network
 
@@ -52,6 +55,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
     networks:
       - spring-cloud-network
 
@@ -63,6 +67,20 @@ services:
     networks:
       - spring-cloud-network
     command: "consul agent -dev -client=0.0.0.0"
+
+  config-server:
+    image: openjdk:17-jdk-alpine
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./config-server/target:/app
+    working_dir: /app
+    command: sh -c "java -jar $(ls *.jar)"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring-cloud-network
 
 networks:
   spring-cloud-network:
