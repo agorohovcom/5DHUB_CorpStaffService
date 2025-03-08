@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
@@ -112,7 +113,9 @@ class CompanyServiceImplTest {
         when(employeeService.findEmployeeIdsByCompanyId(COMPANY_ID)).thenReturn(List.of(EMPLOYEE_ID));
         when(userServiceFeignClient.getUsersByIds(List.of(EMPLOYEE_ID))).thenReturn(List.of(userDto));
 
-        Page<UserDto> actual = out.getUsersByCompanyId(COMPANY_ID, Pageable.unpaged());
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<UserDto> actual = out.getUsersByCompanyId(COMPANY_ID, pageable);
 
         assertEquals(1, actual.getContent().size());
         assertEquals(userDto.getId(), actual.getContent().get(0).getId());
@@ -134,9 +137,12 @@ class CompanyServiceImplTest {
         when(employeeService.findEmployeeIdsByCompanyId(COMPANY_ID)).thenReturn(List.of(EMPLOYEE_ID));
         when(userServiceFeignClient.getUsersByIds(List.of(EMPLOYEE_ID))).thenReturn(List.of(new UserDto()));
 
-        Page<UserDto> actual = out.getUsersByCompanyName(COMPANY_NAME, Pageable.unpaged());
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<UserDto> actual = out.getUsersByCompanyName(COMPANY_NAME, pageable);
 
         assertEquals(1, actual.getContent().size());
+        assertEquals(1, actual.getTotalElements());
     }
 
     @Test
