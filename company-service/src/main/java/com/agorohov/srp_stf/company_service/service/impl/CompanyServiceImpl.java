@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -116,7 +117,13 @@ public class CompanyServiceImpl implements CompanyService {
         List<Long> userIds = employeeService.findEmployeeIdsByCompanyId(companyId);
         List<UserDto> userDtos = userServiceFeignClient.getUsersByIds(userIds);
 
-        Page<UserDto> result = new PageImpl<>(userDtos, pageable, userDtos.size());
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), userDtos.size());
+
+        // Проверяем, что запрашиваемая страница не выходит за границы
+        List<UserDto> pagedList = start < userDtos.size() ? userDtos.subList(start, end) : Collections.emptyList();
+
+        Page<UserDto> result = new PageImpl<>(pagedList, pageable, userDtos.size());
 
         log.info("Returned page of employees by company id = {}, number of employees: {}",
                 companyId, userDtos.size());
@@ -147,7 +154,13 @@ public class CompanyServiceImpl implements CompanyService {
         List<Long> userIds = employeeService.findEmployeeIdsByCompanyId(companyId);
         List<UserDto> userDtos = userServiceFeignClient.getUsersByIds(userIds);
 
-        Page<UserDto> result = new PageImpl<>(userDtos, pageable, userDtos.size());
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), userDtos.size());
+
+        // Проверяем, что запрашиваемая страница не выходит за границы
+        List<UserDto> pagedList = start < userDtos.size() ? userDtos.subList(start, end) : Collections.emptyList();
+
+        Page<UserDto> result = new PageImpl<>(pagedList, pageable, userDtos.size());
 
         log.info("Returned page of employees by company name = {}, number of employees: {}",
                 companyName, userDtos.size());

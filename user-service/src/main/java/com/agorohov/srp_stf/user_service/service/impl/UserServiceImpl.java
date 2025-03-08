@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
         PageImpl<UserDto> result = new PageImpl<>(
                 employeeDtos, pageable, employeePage.getTotalElements());
+
         log.info("Page with users with lastname {} returned: {}", lastName, result);
         return result;
     }
