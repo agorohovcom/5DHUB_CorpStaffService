@@ -35,9 +35,6 @@ services:
     command: sh -c "java -jar $(ls *.jar)"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONSUL_HOST=consul
-      - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
     networks:
       - spring-cloud-network
 
@@ -53,9 +50,6 @@ services:
     command: sh -c "java -jar $(ls *.jar)"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONSUL_HOST=consul
-      - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
     networks:
       - spring-cloud-network
 
