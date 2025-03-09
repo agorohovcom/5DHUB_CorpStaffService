@@ -54,7 +54,8 @@ public class UserServiceImpl implements UserService {
         PageImpl<UserDto> result = new PageImpl<>(
                 employeeDtos, pageable, employeePage.getTotalElements());
 
-        log.info("Page with users with lastname {} returned: {}", lastName, result);
+        log.info("Returning users by lastname='{}': size={}, totalElements={}",
+                lastName, result.getSize(), result.getTotalElements());
         return result;
     }
 
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
         List<UserDto> result = userEntities.stream()
                 .map(mapper::mapUserEntityToUserDto)
                 .toList();
-        log.info("Returned list with {} instances of UserDto", result.size());
+        log.info("Returning {} users by IDs", result.size());
         return result;
     }
 
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
                     return new UserNotFoundException(msg);
                 });
         UserDto result = mapper.mapUserEntityToUserDto(userEntity);
-        log.info("Got user: {}", result);
+        log.info("Returning user: {}", result);
         return result;
     }
 
@@ -142,7 +143,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(long id) {
         userRepository.deleteById(id);
-        log.info("User with id {} deleted", id);
+        log.info("Deleted user with ID={}", id);
     }
 
     /**
@@ -161,7 +162,8 @@ public class UserServiceImpl implements UserService {
 
         PageImpl<UserDto> result = new PageImpl<>(
                 employeeDtos, pageable, employeePage.getTotalElements());
-        log.info("Page with users returned: {}", result);
+        log.info("Returning all users: page={}, size={}, totalElements={}",
+                pageable.getPageNumber(), pageable.getPageSize(), result.getTotalElements());
         return result;
     }
 
@@ -171,6 +173,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean existsById(long id) {
-        return userRepository.existsById(id);
+        boolean exists = userRepository.existsById(id);
+        log.info("Checking existence of user with ID={}: exists={}", id, exists);
+        return exists;
     }
 }

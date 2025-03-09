@@ -56,7 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
         // Преобразуем сущность компании в ДТО
         CompanyInfo result = mapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
 
-        log.info("Company found by id: {}", result);
+        log.info("Retrieved company by id: {}, number of employees: {}", id, numberOfEmployees);
         return result;
     }
 
@@ -84,7 +84,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         // Преобразуем сущность компании в ДТО и возвращаем результат
         CompanyInfo result = mapper.mapCompanyEntityToCompanyInfo(companyEntity, numberOfEmployees);
-        log.info("Company found by name: {}", result);
+        log.info("Retrieved company by name: {}, number of employees: {}", name, numberOfEmployees);
         return result;
     }
 
@@ -102,7 +102,7 @@ public class CompanyServiceImpl implements CompanyService {
     public Page<UserDto> getUsersByCompanyId(long companyId, Pageable pageable) {
         // Проверяем существование компании
         if (!companyRepository.existsById(companyId)) {
-            String msg = String.format("No employees, because company with id %d not found", companyId);
+            String msg = String.format("No employees, because company with ID %d not found", companyId);
             log.error(msg);
             throw new CompanyNotFoundException(msg);
         }
@@ -118,8 +118,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Page<UserDto> result = new PageImpl<>(pagedList, pageable, userDtos.size());
 
-        log.info("Returned page of employees by company id = {}, number of employees: {}",
-                companyId, userDtos.size());
+        log.info("Retrieved users by company ID={}, total employees={}", companyId, userDtos.size());
         return result;
     }
 
@@ -155,8 +154,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Page<UserDto> result = new PageImpl<>(pagedList, pageable, userDtos.size());
 
-        log.info("Returned page of employees by company name = {}, number of employees: {}",
-                companyName, userDtos.size());
+        log.info("Retrieved users by company name={}, total employees={}", companyName, userDtos.size());
         return result;
     }
 
@@ -178,7 +176,7 @@ public class CompanyServiceImpl implements CompanyService {
         // Сохраняем компанию в БД и маппим в CompanyDto, чтобы вернуть созданную компанию уже с ID
         // (можно обойтись без этого и просто возвращать статус 201 Created вместо CompanyDto)
         CompanyDto result = mapper.mapCompanyEntityToCompanyDto(companyRepository.save(entity));
-        log.info("Created company: {}", result);
+        log.info("Created new company: {}", result);
         return result;
     }
 
@@ -198,7 +196,7 @@ public class CompanyServiceImpl implements CompanyService {
                     return new CompanyNotFoundException(msg);
                 });
         CompanyDto result = mapper.mapCompanyEntityToCompanyDto(companyEntity);
-        log.info("Got company: {}", result);
+        log.info("Retrieved company: {}", result);
         return result;
     }
 
@@ -245,7 +243,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void delete(long id) {
         companyRepository.deleteById(id);
-        log.info("Company with id {} deleted", id);
+        log.info("Deleted company with ID={}", id);
     }
 
     /**
@@ -264,7 +262,8 @@ public class CompanyServiceImpl implements CompanyService {
 
         PageImpl<CompanyDto> result = new PageImpl<>(
                 companyDtos, pageable, companyPage.getTotalElements());
-        log.info("Page with companies returned: {}", result);
+        log.info("Retrieved page of companies: size={}, total={}",
+                companyDtos.size(), companyPage.getTotalElements());
         return result;
     }
 
@@ -296,7 +295,10 @@ public class CompanyServiceImpl implements CompanyService {
             throw new UserNotFoundException(msg);
         }
 
-        return employeeService.addEmployee(mapper.mapCompanyEntityToCompanyDto(companyEntity), employeeId);
+        EmployeeDto result = employeeService.addEmployee(
+                mapper.mapCompanyEntityToCompanyDto(companyEntity), employeeId);
+        log.info("Added employee with id={} to company id={}", employeeId, companyId);
+        return result;
     }
 
     /**
@@ -317,5 +319,6 @@ public class CompanyServiceImpl implements CompanyService {
                     return new CompanyNotFoundException(msg);
                 });
         employeeService.deleteEmployee(employeeId);
+        log.info("Deleted employee with id={} from company id={}", employeeId, companyId);
     }
 }

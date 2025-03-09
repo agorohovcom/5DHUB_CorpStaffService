@@ -31,7 +31,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional(readOnly = true)
     public int getNumberOfEmployeesByCompanyId(long companyId) {
-        return employeeRepository.getNumberOfEmployeesByCompanyId(companyId);
+        int result = employeeRepository.getNumberOfEmployeesByCompanyId(companyId);
+        log.info("Returning number of employees for companyId={}: count={}", companyId, result);
+        return result;
     }
 
     /**
@@ -42,7 +44,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public List<Long> findEmployeeIdsByCompanyId(long companyId) {
-        return employeeRepository.findEmployeeIdsByCompanyId(companyId);
+        List<Long> result = employeeRepository.findEmployeeIdsByCompanyId(companyId);
+        log.info("Returning employee IDs for companyId={}: size={}", companyId, result.size());
+        return result;
     }
 
     /**
@@ -51,7 +55,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public boolean existsById(long id) {
-        return employeeRepository.existsById(id);
+        boolean exists = employeeRepository.existsById(id);
+        log.info("Checking existence of employee with ID={}: exists={}", id, exists);
+        return exists;
     }
 
     /**
@@ -79,7 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeEntity.setCompany(mapper.mapCompanyDtoToCompanyEntityWithoutEmployees(companyDto));
 
         EmployeeDto result = mapper.mapEmployeeEntityToEmployeeDto(employeeRepository.save(employeeEntity));
-        log.info("Added new employee: {}", result);
+        log.info("Added new employee: {} to company with ID={}", result, companyDto.getId());
         return result;
     }
 
@@ -89,5 +95,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(long employeeId) {
         employeeRepository.deleteById(employeeId);
+        log.info("Deleted employee with ID={}", employeeId);
     }
 }
