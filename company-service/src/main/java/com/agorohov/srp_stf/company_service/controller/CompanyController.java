@@ -23,13 +23,13 @@ public class CompanyController {
 
     @GetMapping("/info-by-id/{id}")
     public ResponseEntity<CompanyInfo> getInfoById(@PathVariable("id") long id) {
-        log.info("Entering getInfoById method. ID: {}", id);
+        log.info("GET /companies/info-by-id/{} called", id);
         return ResponseEntity.ok().body(companyService.getById(id));
     }
 
     @GetMapping("/info-by-name/{name}")
     public ResponseEntity<CompanyInfo> getInfoByName(@PathVariable("name") String name) {
-        log.info("Entering getInfoByName method. Name: {}", name);
+        log.info("GET /companies/info-by-name/{} called", name);
         return ResponseEntity.ok().body(companyService.getByName(name));
     }
 
@@ -37,7 +37,7 @@ public class CompanyController {
     public Page<UserDto> getUsersByCompanyId(
             @RequestParam("company-id") long companyId,
             @PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
-        log.info("Entering getUsersByCompanyId method. ID: {}, Pageable: {}", companyId, pageable);
+        log.info("GET /companies/employees-by-company-id called with companyId={}, pageable={}", companyId, pageable);
         return companyService.getUsersByCompanyId(companyId, pageable);
     }
 
@@ -45,31 +45,32 @@ public class CompanyController {
     public Page<UserDto> getUsersByCompanyName(
             @RequestParam("company-name") String companyName,
             @PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
-        log.info("Entering getUsersByCompanyName method. Name: {}, Pageable: {}", companyName, pageable);
+        log.info("GET /companies/employees-by-company-name called with companyName={}, pageable={}",
+                companyName, pageable);
         return companyService.getUsersByCompanyName(companyName, pageable);
     }
 
     @PostMapping
     public ResponseEntity<CompanyDto> create(@Valid @RequestBody CreateCompany company) {
-        log.info("Entering create method. CreateCompany: {}", company);
+        log.info("POST /companies called with company={}", company);
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.create(company));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> get(@PathVariable("id") long id) {
-        log.info("Entering get method. ID: {}", id);
+        log.info("GET /companies/{} called", id);
         return ResponseEntity.status(HttpStatus.OK).body(companyService.get(id));
     }
 
     @PutMapping
     public ResponseEntity<CompanyDto> update(@Valid @RequestBody UpdateCompany company) {
-        log.info("Entering update method. UpdateCompany: {}", company);
+        log.info("PUT /companies called with company={}", company);
         return ResponseEntity.status(HttpStatus.OK).body(companyService.update(company));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        log.info("Entering delete method. ID: {}", id);
+        log.info("DELETE /companies/{} called", id);
         companyService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -77,21 +78,21 @@ public class CompanyController {
     @GetMapping
     public Page<CompanyDto> getAll(
             @PageableDefault(size = 10, page = 0) @Parameter(hidden = true) Pageable pageable) {
-        log.info("Entering getAll method. Pageable: {}", pageable);
+        log.info("GET /companies called with pageable={}", pageable);
         return companyService.getAll(pageable);
     }
 
     @PostMapping("/add-employee")
     public ResponseEntity<EmployeeDto> addEmployee(
             @RequestParam("company-id") long companyId, @RequestParam("employee-id") long employeeId) {
-        log.info("Entering addEmployee method. Company ID: {}, employee ID: {}", companyId, employeeId);
+        log.info("POST /companies/add-employee called with companyId={}, employeeId={}", companyId, employeeId);
         return ResponseEntity.status(HttpStatus.OK).body(companyService.addEmployee(companyId, employeeId));
     }
 
     @DeleteMapping("/delete-employee")
     public ResponseEntity<Void> deleteEmployee(
             @RequestParam("company-id") long companyId, @RequestParam("employee-id") long employeeId) {
-        log.info("Entering deleteEmployee method. Company ID: {}, employee ID: {}", companyId, employeeId);
+        log.info("DELETE /companies/delete-employee called with companyId={}, employeeId={}", companyId, employeeId);
         companyService.deleteEmployee(companyId, employeeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
