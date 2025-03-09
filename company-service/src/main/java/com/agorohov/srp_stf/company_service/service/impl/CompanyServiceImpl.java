@@ -10,8 +10,8 @@ import com.agorohov.srp_stf.company_service.mapper.CompanyMapper;
 import com.agorohov.srp_stf.company_service.repository.CompanyRepository;
 import com.agorohov.srp_stf.company_service.service.CompanyService;
 import com.agorohov.srp_stf.company_service.service.EmployeeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,21 +22,14 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final CompanyRepository companyRepository;
     private final EmployeeService employeeService;
     private final UserServiceFeignClient userServiceFeignClient;
     private final CompanyMapper mapper;
-
-    public CompanyServiceImpl(CompanyRepository companyRepository, EmployeeService employeeService, UserServiceFeignClient userServiceFeignClient, CompanyMapper mapper) {
-        this.companyRepository = companyRepository;
-        this.employeeService = employeeService;
-        this.userServiceFeignClient = userServiceFeignClient;
-        this.mapper = mapper;
-    }
 
     /**
      * Takes company ID and returns CompanyInfo object with extra field - number of employees of this company.
@@ -246,6 +239,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     /**
      * Deletes company with taking ID, returns no data.
+     *
      * @param id company ID
      */
     @Override
@@ -316,7 +310,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public void deleteEmployee(long companyId, long employeeId) {
         // Если компании с companyId нет, возвращаем сообщение об ошибке
-        CompanyEntity companyEntity = companyRepository.findById(companyId)
+        companyRepository.findById(companyId)
                 .orElseThrow(() -> {
                     String msg = String.format("No company with id %d", companyId);
                     log.error(msg);

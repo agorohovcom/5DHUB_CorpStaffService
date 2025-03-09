@@ -8,8 +8,8 @@ import com.agorohov.srp_stf.user_service.exception.UserNotFoundException;
 import com.agorohov.srp_stf.user_service.mapper.UserMapper;
 import com.agorohov.srp_stf.user_service.repository.UserRepository;
 import com.agorohov.srp_stf.user_service.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,17 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final UserRepository userRepository;
     private final UserMapper mapper;
-
-    public UserServiceImpl(UserRepository userRepository, UserMapper mapper) {
-        this.userRepository = userRepository;
-        this.mapper = mapper;
-    }
 
     /**
      * Takes a last name to search for users and a Pageable with page size and number,

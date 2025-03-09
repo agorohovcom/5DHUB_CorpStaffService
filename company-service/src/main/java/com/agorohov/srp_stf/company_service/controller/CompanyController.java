@@ -4,8 +4,8 @@ import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.service.CompanyService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,15 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/companies")
+@RequiredArgsConstructor
+@Slf4j
 public class CompanyController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     private final CompanyService companyService;
-
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
 
     @GetMapping("/info-by-id/{id}")
     public ResponseEntity<CompanyInfo> getInfoById(@PathVariable("id") long id) {
