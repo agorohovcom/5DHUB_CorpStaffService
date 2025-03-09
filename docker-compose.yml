@@ -75,10 +75,11 @@ services:
       - "8888:8888"
     volumes:
       - ./config-server/target:/app
+      - ./config-server/config:/config
     working_dir: /app
     command: sh -c "java -jar $(ls *.jar)"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker,native
     networks:
       - spring-cloud-network
 
