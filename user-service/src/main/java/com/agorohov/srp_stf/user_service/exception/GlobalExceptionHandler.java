@@ -27,15 +27,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
-    @ExceptionHandler(MapperException.class)
-    public ResponseEntity<ErrorMessage> mapperException(MapperException e) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setMessage("Internal server error, please try again later");
-        errorMessage.setTime(LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
-    }
-
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorMessage> feignException(FeignException e) {
         ErrorMessage errorMessage = new ErrorMessage();

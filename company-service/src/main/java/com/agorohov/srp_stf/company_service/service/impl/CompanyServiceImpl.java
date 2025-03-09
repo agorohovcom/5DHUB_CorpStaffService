@@ -179,7 +179,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto create(CreateCompany company) {
         // Проверяем, нет ли уже компании с таким именем
         if (companyRepository.existsByNameIgnoreCase(company.getName().trim())) {
-            throw new CompanyAlreadyExistsException("There is already a company with the name" + company.getName());
+            throw new CompanyAlreadyExistsException("There is already a company with the name " + company.getName());
         }
         CompanyEntity entity = mapper.mapCreateCompanyToCompanyEntity(company);
         // Сохраняем компанию в БД и маппим в CompanyDto, чтобы вернуть созданную компанию уже с ID

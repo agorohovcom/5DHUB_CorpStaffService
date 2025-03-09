@@ -4,56 +4,27 @@ import com.agorohov.srp_stf.user_service.dto.CreateUser;
 import com.agorohov.srp_stf.user_service.dto.UpdateUser;
 import com.agorohov.srp_stf.user_service.dto.UserDto;
 import com.agorohov.srp_stf.user_service.entity.UserEntity;
-import com.agorohov.srp_stf.user_service.exception.MapperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class UserMapper {
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(UserMapper.class);
+    @Mapping(target = "id", source = "entity.id")
+    @Mapping(target = "firstName", source = "entity.firstName")
+    @Mapping(target = "lastName", source = "entity.lastName")
+    @Mapping(target = "phoneNumber", source = "entity.phoneNumber")
+    UserDto mapUserEntityToUserDto(UserEntity entity);
 
-    public UserDto mapUserEntityToUserDto(UserEntity entity) {
-        try {
-            return new UserDto(
-                    entity.getId(),
-                    entity.getFirstName(),
-                    entity.getLastName(),
-                    entity.getPhoneNumber());
-        } catch (Exception ex) {
-            log.error("Failed mapping UserEntity to UserDto: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
+    @Mapping(target = "firstName", source = "user.firstName")
+    @Mapping(target = "lastName", source = "user.lastName")
+    @Mapping(target = "phoneNumber", source = "user.phoneNumber")
+    @Mapping(target = "id", ignore = true)
+    UserEntity mapCreateUserToUserEntity(CreateUser user);
 
-    public UserEntity mapCreateUserToUserEntity(CreateUser user) {
-        try {
-            UserEntity result = new UserEntity();
-            result.setFirstName(user.getFirstName());
-            result.setLastName(user.getLastName());
-            result.setPhoneNumber(user.getPhoneNumber());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping CreateUser to UserEntity: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
-
-    public UserEntity mapUpdateUserToUserEntity(UpdateUser user) {
-        try {
-            UserEntity result = new UserEntity();
-            result.setId(user.getId());
-            result.setFirstName(user.getFirstName());
-            result.setLastName(user.getLastName());
-            result.setPhoneNumber(user.getPhoneNumber());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping UpdateUser to UserEntity: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
-
-    private UserMapper() {
-    }
+    @Mapping(target = "id", source = "user.id")
+    @Mapping(target = "firstName", source = "user.firstName")
+    @Mapping(target = "lastName", source = "user.lastName")
+    @Mapping(target = "phoneNumber", source = "user.phoneNumber")
+    UserEntity mapUpdateUserToUserEntity(UpdateUser user);
 }

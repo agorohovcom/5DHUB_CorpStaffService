@@ -3,93 +3,42 @@ package com.agorohov.srp_stf.company_service.mapper;
 import com.agorohov.srp_stf.company_service.dto.*;
 import com.agorohov.srp_stf.company_service.entity.CompanyEntity;
 import com.agorohov.srp_stf.company_service.entity.EmployeeEntity;
-import com.agorohov.srp_stf.company_service.exception.MapperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class CompanyMapper {
+@Mapper(componentModel = "spring")
+public interface CompanyMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(CompanyMapper.class);
+    @Mapping(target = "id", source = "entity.id")
+    @Mapping(target = "name", source = "entity.name")
+    @Mapping(target = "budget", source = "entity.budget")
+    CompanyDto mapCompanyEntityToCompanyDto(CompanyEntity entity);
 
-    public CompanyDto mapCompanyEntityToCompanyDto(CompanyEntity entity) {
-        try {
-            CompanyDto result = new CompanyDto();
-            result.setId(entity.getId());
-            result.setName(entity.getName());
-            result.setBudget(entity.getBudget());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping CompanyEntity to CompanyDto: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
+    @Mapping(target = "id", source = "entity.id")
+    @Mapping(target = "name", source = "entity.name")
+    @Mapping(target = "budget", source = "entity.budget")
+    @Mapping(target = "numberOfEmployees", source = "numberOfEmployees")
+    CompanyInfo mapCompanyEntityToCompanyInfo(CompanyEntity entity, int numberOfEmployees);
 
-    public CompanyInfo mapCompanyEntityToCompanyInfo(CompanyEntity entity, int numberOfEmployees) {
-        try {
-            CompanyInfo result = new CompanyInfo();
-            result.setId(entity.getId());
-            result.setName(entity.getName());
-            result.setBudget(entity.getBudget());
-            result.setNumberOfEmployees(numberOfEmployees);
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping CompanyEntity to CompanyInfo: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
+    @Mapping(target = "name", source = "company.name")
+    @Mapping(target = "budget", source = "company.budget")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "employees", ignore = true)
+    CompanyEntity mapCreateCompanyToCompanyEntity(CreateCompany company);
 
-    public CompanyEntity mapCreateCompanyToCompanyEntity(CreateCompany company) {
-        try {
-            CompanyEntity result = new CompanyEntity();
-            result.setName(company.getName().trim());
-            result.setBudget(company.getBudget());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping CreateCompany to CompanyEntity: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
+    @Mapping(target = "id", source = "company.id")
+    @Mapping(target = "name", source = "company.name")
+    @Mapping(target = "budget", source = "company.budget")
+    @Mapping(target = "employees", ignore = true)
+    CompanyEntity mapUpdateCompanyToCompanyEntity(UpdateCompany company);
 
-    public CompanyEntity mapUpdateCompanyToCompanyEntity(UpdateCompany company) {
-        try {
-            CompanyEntity result = new CompanyEntity();
-            result.setId(company.getId());
-            result.setName(company.getName());
-            result.setBudget(company.getBudget());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping UpdateCompany to CompanyEntity: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
+    @Mapping(target = "id", source = "companyDto.id")
+    @Mapping(target = "name", source = "companyDto.name")
+    @Mapping(target = "budget", source = "companyDto.budget")
+    @Mapping(target = "employees", ignore = true)
+    CompanyEntity mapCompanyDtoToCompanyEntityWithoutEmployees(CompanyDto companyDto);
 
-    public CompanyEntity mapCompanyDtoToCompanyEntityWithoutEmployees(CompanyDto companyDto) {
-        try {
-            CompanyEntity result = new CompanyEntity();
-            result.setId(companyDto.getId());
-            result.setName(companyDto.getName());
-            result.setBudget(companyDto.getBudget());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping CompanyDto to CompanyEntity: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
-
-    public EmployeeDto mapEmployeeEntityToEmployeeDto(EmployeeEntity entity) {
-        try {
-            EmployeeDto result = new EmployeeDto();
-            result.setUserId(entity.getUserId());
-            result.setCompanyId(entity.getCompany().getId());
-            return result;
-        } catch (Exception ex) {
-            log.error("Failed mapping EmployeeEntity to EmployeeDto: {}", ex.getLocalizedMessage());
-            throw new MapperException(ex);
-        }
-    }
-
-    private CompanyMapper() {
-    }
+    @Mapping(target = "userId", source = "entity.userId")
+    @Mapping(target = "companyId", source = "entity.company.id")
+    EmployeeDto mapEmployeeEntityToEmployeeDto(EmployeeEntity entity);
 }
